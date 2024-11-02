@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.MecanumBot;
 
 //@Disabled
-@TeleOp (name = "Mecanum")
-public class MecanumTeleOp extends OpMode {
+@TeleOp (name = "Driver Practice")
+public class DriverPracticeTeleOp extends OpMode {
 
     double leftStickYVal;
     double leftStickXVal;

@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.Outreach.Drivetrains;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,16 +18,6 @@ public class MecanumDrive {
     public DcMotor leftEncoder;
     public DcMotor rightEncoder;
     public DcMotor centerEncoder;
-
-    //public DcMotor fourBar;
-
-    public DcMotor liftOne;
-    public Servo liftRelease;
-
-    public Servo extender = null;
-
-    public CRServo sampleIntakeServo = null;
-
 
     public LinearOpMode LinearOp = null;
 

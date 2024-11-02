@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
 //@Disabled
-@TeleOp(name = "Tank Drive")
+@TeleOp(name = "Tank")
 
-public class TankDriveTeleOp extends OpMode {
+public class TankTeleOp extends OpMode {
 
     //TeleOp Driving Behavior Variables
     public double speedMultiply = 1;

@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Outreach.Drivetrains.TankFourMotorDrive;
 
-public class TankBot extends TankFourMotorDrive {
+public class BigWheelBot extends TankFourMotorDrive {
 
     // Hardware Mapping Variable used by robot controller
     public HardwareMap hwBot = null;
 
     // Robot Physical Constructor used in TeleOp and Autonomous classes
-    public TankBot() { }
+    public BigWheelBot() { }
 
     // Custom Method that will initialize the robot hardware in TeleOp and Autonomous
     public void initRobot (HardwareMap hwMap) {

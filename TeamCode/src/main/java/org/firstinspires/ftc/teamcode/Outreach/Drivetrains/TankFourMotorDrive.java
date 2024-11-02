@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
-public class Tank_FourMotorDrive {
+public class TankFourMotorDrive {
 
 
     public DcMotor frontLeftMotor;
