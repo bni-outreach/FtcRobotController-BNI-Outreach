@@ -10,13 +10,15 @@ import org.firstinspires.ftc.teamcode.Outreach.Drivetrains.Tank_WallE;
 
 
 public class WalleBot extends Tank_WallE {
-    //define Mechinism Varibles
+
+
     //Set Lazy Susan movement values
     public DcMotor rightLinearActuator;
     public DcMotor leftLinearActuator;
     public DcMotor lazy_Susan;
     public Servo leftClaw = null;
     public Servo rightClaw = null;
+
     //Hardware Mapping Variable used by robot controller
     public HardwareMap hwBot = null;
 
@@ -31,17 +33,16 @@ public class WalleBot extends Tank_WallE {
         hwBot = hwMap;
 
         //Define the name of the motors used in the control hub configuation
-        frontLeftMotor = hwBot.dcMotor.get("frontLeftMotor"); //Port 0
-        frontRightMotor = hwBot.dcMotor.get("frontRightMotor");// Port 2
-        rearLeftMotor = hwBot.dcMotor.get("rearLeftMotor");// Port 1
-        rearRightMotor = hwBot.dcMotor.get("rearRightMotor");// Port 3
+        frontLeftMotor = hwBot.dcMotor.get("front_left_motor"); //Port 0
+        frontRightMotor = hwBot.dcMotor.get("front_right_motor");// Port 2
+        rearLeftMotor = hwBot.dcMotor.get("rear_left_motor");// Port 1
+        rearRightMotor = hwBot.dcMotor.get("rear_right_motor");// Port 3
 
         //Sets the direction of the robot's motors based on physical placement
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         rearLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         rearRightMotor.setDirection(DcMotor.Direction.FORWARD);
-
 
         //Define this robot run modes
         setMotorRunModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -54,8 +55,6 @@ public class WalleBot extends Tank_WallE {
         rearRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
-        /**  ********  Tankbot_Connor Mechanisms ************     **/
-
         //Expansion Hub Port 2
 
         lazy_Susan = hwBot.dcMotor.get("lazySusan");
@@ -66,7 +65,7 @@ public class WalleBot extends Tank_WallE {
         lazy_Susan.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-        /** Linear Actuatiors*********    **/
+        /** Linear Actuators*********    **/
 
         rightLinearActuator = hwBot.dcMotor.get("sidewaysLinearMotor"); //Expantion Hub Port 0
         leftLinearActuator = hwBot.dcMotor.get("upAndDownLinearMotor"); //Expantion Hub Port 1
@@ -88,7 +87,7 @@ public class WalleBot extends Tank_WallE {
 
         rightClaw = hwBot.get(Servo.class, "rightClaw");
         rightClaw.setDirection(Servo.Direction.REVERSE);
-        /** Linear Actuatiors*********    **/
+
 
 
     }
