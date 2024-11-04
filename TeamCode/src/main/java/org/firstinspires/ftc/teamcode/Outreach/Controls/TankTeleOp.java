@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
 //@Disabled
-@TeleOp(name = "Tank")
+@TeleOp(name = "Tank:Standard")
 
 public class TankTeleOp extends OpMode {
 

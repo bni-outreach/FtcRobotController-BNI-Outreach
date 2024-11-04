@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
 //@Disabled
-@TeleOp(name = "Tank Differential: PowerScale")
+@TeleOp(name = "Tank:Differential:PowerScaling")
 
 public class TankCurvedPowerScalingTeleOp extends OpMode {
 

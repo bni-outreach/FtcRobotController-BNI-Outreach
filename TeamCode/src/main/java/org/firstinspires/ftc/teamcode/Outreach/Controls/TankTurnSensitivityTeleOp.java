@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
 //@Disabled
-@TeleOp(name = "Tank Differential: Sensitivity")
+@TeleOp(name = "Tank:Differential:TurnSensitivity")
 
 public class TankTurnSensitivityTeleOp extends OpMode {
 

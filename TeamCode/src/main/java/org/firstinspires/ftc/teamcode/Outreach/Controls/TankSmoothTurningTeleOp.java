@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
 //@Disabled
-@TeleOp(name = "Tank Differential: Smooth")
+@TeleOp(name = "Tank:Differential:SmoothTurning")
 
 public class TankSmoothTurningTeleOp extends OpMode {
 
