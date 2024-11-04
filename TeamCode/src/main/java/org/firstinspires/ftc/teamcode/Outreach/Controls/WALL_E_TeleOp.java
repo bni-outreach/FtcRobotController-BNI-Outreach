@@ -37,11 +37,6 @@ public class WALL_E_TeleOp extends OpMode {
 
     public double lazySusanPower = 0.90;
 
-    double leftStickYVal;
-    double leftStickXVal;
-    double rightStickYVal;
-    double rightStickXVal;
-
     public WalleBot WALL_E = new WalleBot();
 
     @Override

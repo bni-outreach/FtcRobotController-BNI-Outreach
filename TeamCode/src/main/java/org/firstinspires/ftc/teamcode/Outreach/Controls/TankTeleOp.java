@@ -30,14 +30,14 @@ public class TankTeleOp extends OpMode {
     public double rightMotorValue;
 
     // Construct the Physical Bot based on the Robot Class
-    public TankBot Bruno = new TankBot();
+    public TankBot ThomasTank = new TankBot();
 
 
     // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
-        Bruno.initRobot(hardwareMap);
+        ThomasTank.initRobot(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -60,10 +60,10 @@ public class TankTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", Bruno.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", Bruno.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", Bruno.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", Bruno.rearRightMotor.getPower());
+        telemetry.addData("Front Left Motor Power: ", ThomasTank.frontLeftMotor.getPower());
+        telemetry.addData("Rear Left Motor Power: ", ThomasTank.rearLeftMotor.getPower());
+        telemetry.addData("Front Right Motor Power: ", ThomasTank.frontRightMotor.getPower());
+        telemetry.addData("Rear Right Motor Power: ", ThomasTank.rearRightMotor.getPower());
         telemetry.update();
 
     }
@@ -99,10 +99,10 @@ public class TankTeleOp extends OpMode {
                 rightMotorValue = leftStickY1 + leftStickX1;
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
                 rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-                Bruno.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bruno.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bruno.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-                Bruno.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+                ThomasTank.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+                ThomasTank.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+                ThomasTank.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+                ThomasTank.rearRightMotor.setPower(rightMotorValue * speedMultiply);
                 break;
 
             case ARCADE2:
@@ -110,10 +110,10 @@ public class TankTeleOp extends OpMode {
                 rightMotorValue = leftStickY1 + rightStickX1;
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
                 rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-                Bruno.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bruno.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bruno.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-                Bruno.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+                ThomasTank.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+                ThomasTank.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+                ThomasTank.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+                ThomasTank.rearRightMotor.setPower(rightMotorValue * speedMultiply);
                 break;
 
             case TANK:
@@ -123,10 +123,10 @@ public class TankTeleOp extends OpMode {
                 double powerFRM = rightStickY1 * speedMultiply;
                 double powerRRM = rightStickY1 * speedMultiply;
 
-                Bruno.frontLeftMotor.setPower(powerFLM);
-                Bruno.rearLeftMotor.setPower(powerRLM);
-                Bruno.frontRightMotor.setPower(powerFRM);
-                Bruno.rearRightMotor.setPower(powerRRM);
+                ThomasTank.frontLeftMotor.setPower(powerFLM);
+                ThomasTank.rearLeftMotor.setPower(powerRLM);
+                ThomasTank.frontRightMotor.setPower(powerFRM);
+                ThomasTank.rearRightMotor.setPower(powerRRM);
                 break;
         }
     }

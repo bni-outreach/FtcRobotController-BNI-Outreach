@@ -31,14 +31,14 @@ public class BigWheelTeleOp extends OpMode {
     public double rightMotorValue;
 
     // Construct the Physical Bot based on the Robot Class
-    public BigWheelBot Bot = new BigWheelBot();
+    public BigWheelBot BigBoy = new BigWheelBot();
 
 
     // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
-        Bot.initRobot(hardwareMap);
+        BigBoy.initRobot(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -61,10 +61,10 @@ public class BigWheelTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", Bot.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", Bot.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", Bot.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", Bot.rearRightMotor.getPower());
+        telemetry.addData("Front Left Motor Power: ", BigBoy.frontLeftMotor.getPower());
+        telemetry.addData("Rear Left Motor Power: ", BigBoy.rearLeftMotor.getPower());
+        telemetry.addData("Front Right Motor Power: ", BigBoy.frontRightMotor.getPower());
+        telemetry.addData("Rear Right Motor Power: ", BigBoy.rearRightMotor.getPower());
         telemetry.update();
 
     }
@@ -100,10 +100,10 @@ public class BigWheelTeleOp extends OpMode {
                 rightMotorValue = leftStickY1 + leftStickX1;
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
                 rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-                Bot.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bot.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bot.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-                Bot.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+                BigBoy.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+                BigBoy.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+                BigBoy.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+                BigBoy.rearRightMotor.setPower(rightMotorValue * speedMultiply);
                 break;
 
             case ARCADE2:
@@ -111,10 +111,10 @@ public class BigWheelTeleOp extends OpMode {
                 rightMotorValue = leftStickY1 + rightStickX1;
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
                 rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-                Bot.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bot.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bot.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-                Bot.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+                BigBoy.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+                BigBoy.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+                BigBoy.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+                BigBoy.rearRightMotor.setPower(rightMotorValue * speedMultiply);
                 break;
 
             case TANK:
@@ -124,10 +124,10 @@ public class BigWheelTeleOp extends OpMode {
                 double powerFRM = rightStickY1 * speedMultiply;
                 double powerRRM = rightStickY1 * speedMultiply;
 
-                Bot.frontLeftMotor.setPower(powerFLM);
-                Bot.rearLeftMotor.setPower(powerRLM);
-                Bot.frontRightMotor.setPower(powerFRM);
-                Bot.rearRightMotor.setPower(powerRRM);
+                BigBoy.frontLeftMotor.setPower(powerFLM);
+                BigBoy.rearLeftMotor.setPower(powerRLM);
+                BigBoy.frontRightMotor.setPower(powerFRM);
+                BigBoy.rearRightMotor.setPower(powerRRM);
                 break;
         }
     }

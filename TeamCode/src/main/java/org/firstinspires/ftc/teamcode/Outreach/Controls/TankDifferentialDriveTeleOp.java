@@ -30,14 +30,14 @@ public class TankDifferentialDriveTeleOp extends OpMode {
     public double rightMotorValue;
 
     // Construct the Physical Bot based on the Robot Class
-    public TankBot Bruno = new TankBot();
+    public TankBot Barry = new TankBot();
 
 
     // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
-        Bruno.initRobot(hardwareMap);
+        Barry.initRobot(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -60,10 +60,10 @@ public class TankDifferentialDriveTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", Bruno.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", Bruno.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", Bruno.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", Bruno.rearRightMotor.getPower());
+        telemetry.addData("Front Left Motor Power: ", Barry.frontLeftMotor.getPower());
+        telemetry.addData("Rear Left Motor Power: ", Barry.rearLeftMotor.getPower());
+        telemetry.addData("Front Right Motor Power: ", Barry.frontRightMotor.getPower());
+        telemetry.addData("Rear Right Motor Power: ", Barry.rearRightMotor.getPower());
         telemetry.update();
 
     }
@@ -99,10 +99,10 @@ public class TankDifferentialDriveTeleOp extends OpMode {
                 rightMotorValue = Math.pow(leftStickY1 + leftStickX1,3);
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
                 rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-                Bruno.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bruno.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bruno.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-                Bruno.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+                Barry.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+                Barry.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+                Barry.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+                Barry.rearRightMotor.setPower(rightMotorValue * speedMultiply);
                 break;
 
             case ARCADE2:
@@ -110,14 +110,13 @@ public class TankDifferentialDriveTeleOp extends OpMode {
                 rightMotorValue = Math.pow(leftStickY1 + rightStickX1,3);
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
                 rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-                Bruno.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bruno.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-                Bruno.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-                Bruno.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+                Barry.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+                Barry.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+                Barry.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+                Barry.rearRightMotor.setPower(rightMotorValue * speedMultiply);
                 break;
 
             case TANK:
-
                 double turningFactor = Math.abs(leftStickY1 - rightStickY1) * 0.5;  // Adjust factor as needed
                 double powerFLM;
                 double powerRLM;
@@ -138,14 +137,13 @@ public class TankDifferentialDriveTeleOp extends OpMode {
                     powerRRM = rightStickY1 * speedMultiply * (1 - turningFactor);
                 }
 
-                Bruno.frontLeftMotor.setPower(powerFLM);
-                Bruno.rearLeftMotor.setPower(powerRLM);
-                Bruno.frontRightMotor.setPower(powerFRM);
-                Bruno.rearRightMotor.setPower(powerRRM);
+                Barry.frontLeftMotor.setPower(powerFLM);
+                Barry.rearLeftMotor.setPower(powerRLM);
+                Barry.frontRightMotor.setPower(powerFRM);
+                Barry.rearRightMotor.setPower(powerRRM);
                 break;
         }
     }
-
 
 
     public void speedControl () {

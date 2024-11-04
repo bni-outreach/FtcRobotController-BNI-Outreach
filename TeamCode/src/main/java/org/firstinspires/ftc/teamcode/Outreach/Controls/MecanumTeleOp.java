@@ -28,12 +28,12 @@ public class MecanumTeleOp extends OpMode {
     private int currentProfile = PROFILE_2;
 
 
-    public MecanumBot Bot = new MecanumBot();
+    public MecanumBot BigHero6 = new MecanumBot();
 
     @Override
     public void init (){
 
-        Bot.initRobot(hardwareMap);
+        BigHero6.initRobot(hardwareMap);
     }
 
     public void init_loop(){}
@@ -106,10 +106,10 @@ public class MecanumTeleOp extends OpMode {
         rearRightSpeed = Range.clip(rearRightSpeed, -1, 1);
 
         // Setting motor powers (with threshold check)
-        setMotorPower(Bot.frontLeftMotor, frontLeftSpeed, powerThreshold, speedMultiply);
-        setMotorPower(Bot.frontRightMotor, frontRightSpeed, powerThreshold, speedMultiply);
-        setMotorPower(Bot.rearLeftMotor, rearLeftSpeed, powerThreshold, speedMultiply);
-        setMotorPower(Bot.rearRightMotor, rearRightSpeed, powerThreshold, speedMultiply);
+        setMotorPower(BigHero6.frontLeftMotor, frontLeftSpeed, powerThreshold, speedMultiply);
+        setMotorPower(BigHero6.frontRightMotor, frontRightSpeed, powerThreshold, speedMultiply);
+        setMotorPower(BigHero6.rearLeftMotor, rearLeftSpeed, powerThreshold, speedMultiply);
+        setMotorPower(BigHero6.rearRightMotor, rearRightSpeed, powerThreshold, speedMultiply);
     }
 
     public void setMotorPower(DcMotor motor, double speed, double threshold, double multiplier) {
