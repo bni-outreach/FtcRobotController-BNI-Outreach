@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
 //@Disabled
-@TeleOp(name = "Tank Differential: Sensitivity")
+@TeleOp(name = "Tank Differential: PowerScale")
 
-public class TankTurnSensitivityTeleOp extends OpMode {
+public class TankCurvedPowerScalingTeleOp extends OpMode {
 
     //TeleOp Driving Behavior Variables
     public double speedMultiply = 1;
@@ -29,17 +29,15 @@ public class TankTurnSensitivityTeleOp extends OpMode {
     public double leftMotorValue;
     public double rightMotorValue;
 
-    public double turnSensitivity = 1.5;
-
     // Construct the Physical Bot based on the Robot Class
-    public TankBot Bruno = new TankBot();
+    public TankBot Barry = new TankBot();
 
 
     // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
-        Bruno.initRobot(hardwareMap);
+        Barry.initRobot(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -62,10 +60,10 @@ public class TankTurnSensitivityTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", Bruno.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", Bruno.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", Bruno.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", Bruno.rearRightMotor.getPower());
+        telemetry.addData("Front Left Motor Power: ", Barry.frontLeftMotor.getPower());
+        telemetry.addData("Rear Left Motor Power: ", Barry.rearLeftMotor.getPower());
+        telemetry.addData("Front Right Motor Power: ", Barry.frontRightMotor.getPower());
+        telemetry.addData("Rear Right Motor Power: ", Barry.rearRightMotor.getPower());
         telemetry.update();
 
     }
@@ -77,6 +75,12 @@ public class TankTurnSensitivityTeleOp extends OpMode {
         leftStickX1 = gamepad1.left_stick_x;
         rightStickY1 = gamepad1.right_stick_y;
         rightStickX1 = gamepad1.right_stick_x;
+
+
+    }
+
+    public double applyCurve(double input) {
+        return Math.pow(input, 3); // Cubic scaling
     }
 
     public void driveControl() {
@@ -86,28 +90,29 @@ public class TankTurnSensitivityTeleOp extends OpMode {
 
         switch (driverStyle) {
             case ARCADE1:
-                leftMotorValue = leftStickY1 - (leftStickX1 * turnSensitivity);
-                rightMotorValue = leftStickY1 + (leftStickX1 * turnSensitivity);
+                leftMotorValue = applyCurve(leftStickY1) - applyCurve(leftStickX1);
+                rightMotorValue = applyCurve(leftStickY1) + applyCurve(leftStickX1);
                 break;
 
             case ARCADE2:
-                leftMotorValue = leftStickY1 - (rightStickX1 * turnSensitivity);
-                rightMotorValue = leftStickY1 + (rightStickX1 * turnSensitivity);
+                leftMotorValue = applyCurve(leftStickY1) - applyCurve(rightStickX1);
+                rightMotorValue = applyCurve(leftStickY1) + applyCurve(rightStickX1);
                 break;
 
             case TANK:
-                leftMotorValue = leftStickY1 * speedMultiply * turnSensitivity;
-                rightMotorValue = rightStickY1 * speedMultiply * turnSensitivity;
+                leftMotorValue = applyCurve(leftStickY1) * speedMultiply;
+                rightMotorValue = applyCurve(rightStickY1) * speedMultiply;
                 break;
         }
 
         leftMotorValue = Range.clip(leftMotorValue, -1, 1);
         rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-        Bruno.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-        Bruno.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-        Bruno.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-        Bruno.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+        Barry.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+        Barry.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+        Barry.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+        Barry.rearRightMotor.setPower(rightMotorValue * speedMultiply);
     }
+
 
     public void speedControl () {
             if (gamepad1.dpad_right) {

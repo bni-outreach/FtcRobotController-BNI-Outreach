@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
 //@Disabled
-@TeleOp(name = "Tank Differential: Sensitivity")
+@TeleOp(name = "Tank Differential: Smooth")
 
-public class TankTurnSensitivityTeleOp extends OpMode {
+public class TankSmoothTurningTeleOp extends OpMode {
 
     //TeleOp Driving Behavior Variables
     public double speedMultiply = 1;
@@ -29,17 +29,15 @@ public class TankTurnSensitivityTeleOp extends OpMode {
     public double leftMotorValue;
     public double rightMotorValue;
 
-    public double turnSensitivity = 1.5;
-
     // Construct the Physical Bot based on the Robot Class
-    public TankBot Bruno = new TankBot();
+    public TankBot Eddie = new TankBot();
 
 
     // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
-        Bruno.initRobot(hardwareMap);
+        Eddie.initRobot(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -62,12 +60,11 @@ public class TankTurnSensitivityTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", Bruno.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", Bruno.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", Bruno.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", Bruno.rearRightMotor.getPower());
+        telemetry.addData("Front Left Motor Power: ", Eddie.frontLeftMotor.getPower());
+        telemetry.addData("Rear Left Motor Power: ", Eddie.rearLeftMotor.getPower());
+        telemetry.addData("Front Right Motor Power: ", Eddie.frontRightMotor.getPower());
+        telemetry.addData("Rear Right Motor Power: ", Eddie.rearRightMotor.getPower());
         telemetry.update();
-
     }
 
     /**  ********  DRIVING METHODS USING GAMEPAD 1 *************      **/
@@ -84,30 +81,38 @@ public class TankTurnSensitivityTeleOp extends OpMode {
         if (gamepad1.b) driverStyle = Style.ARCADE2;
         if (gamepad1.y) driverStyle = Style.TANK;
 
+        double turningFactor = 0.5; // Adjust to control turn smoothness
+
         switch (driverStyle) {
             case ARCADE1:
-                leftMotorValue = leftStickY1 - (leftStickX1 * turnSensitivity);
-                rightMotorValue = leftStickY1 + (leftStickX1 * turnSensitivity);
+                leftMotorValue = leftStickY1 - (leftStickX1 * turningFactor);
+                rightMotorValue = leftStickY1 + (leftStickX1 * turningFactor);
                 break;
 
             case ARCADE2:
-                leftMotorValue = leftStickY1 - (rightStickX1 * turnSensitivity);
-                rightMotorValue = leftStickY1 + (rightStickX1 * turnSensitivity);
+                leftMotorValue = leftStickY1 - (rightStickX1 * turningFactor);
+                rightMotorValue = leftStickY1 + (rightStickX1 * turningFactor);
                 break;
 
             case TANK:
-                leftMotorValue = leftStickY1 * speedMultiply * turnSensitivity;
-                rightMotorValue = rightStickY1 * speedMultiply * turnSensitivity;
+                if (leftStickY1 > rightStickY1) {
+                    leftMotorValue = leftStickY1 * speedMultiply * (1 - turningFactor);
+                    rightMotorValue = rightStickY1 * speedMultiply * (1 + turningFactor);
+                } else {
+                    leftMotorValue = leftStickY1 * speedMultiply * (1 + turningFactor);
+                    rightMotorValue = rightStickY1 * speedMultiply * (1 - turningFactor);
+                }
                 break;
         }
 
         leftMotorValue = Range.clip(leftMotorValue, -1, 1);
         rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-        Bruno.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-        Bruno.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-        Bruno.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-        Bruno.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+        Eddie.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+        Eddie.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+        Eddie.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+        Eddie.rearRightMotor.setPower(rightMotorValue * speedMultiply);
     }
+
 
     public void speedControl () {
             if (gamepad1.dpad_right) {
