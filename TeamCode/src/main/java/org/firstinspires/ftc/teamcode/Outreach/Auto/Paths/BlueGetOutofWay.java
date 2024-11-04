@@ -20,7 +20,7 @@ public class BlueGetOutofWay extends BlueAlliance {
         //drive methods are pulled from Drivetrain
         while(opModeIsActive()){
 
-            Bot.strafeRight(1, 3);
+            ProgramBot.strafeRight(1, 3);
             sleep(25000);
             requestOpModeStop();
 

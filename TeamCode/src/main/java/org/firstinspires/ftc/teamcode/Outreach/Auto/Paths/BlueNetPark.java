@@ -20,7 +20,7 @@ public class BlueNetPark extends BlueAlliance {
 
             sleep(25000);
 
-            Bot.driveForward(1, 2);
+            ProgramBot.driveForward(1, 2);
 
             requestOpModeStop();
 

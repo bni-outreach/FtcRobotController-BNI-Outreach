@@ -6,12 +6,12 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.MecanumBot;
 public abstract class AutoMain extends LinearOpMode {
 
     // Constructor for the Competition Robot for the Blue Team
-    public MecanumBot Bot = new MecanumBot();
+    public MecanumBot ProgramBot = new MecanumBot();
 
     // Helper Method for Initializing, Setting LinearOp, and Updating Telemetry
     public void autoStartUp(){
-        Bot.initRobot(hardwareMap);
-        Bot.setLinearOp(this);
+        ProgramBot.initRobot(hardwareMap);
+        ProgramBot.setLinearOp(this);
         telemetry.addLine("Awaiting Start");
         telemetry.update();
     }

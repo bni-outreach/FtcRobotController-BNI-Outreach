@@ -21,13 +21,13 @@ public class BlueNetSamplePark extends BlueAlliance {
             //drive code
             while (opModeIsActive()) {
 
-                Bot.strafeRight(1, .15);
-                Bot.driveForward(1, 3.85);
+                ProgramBot.strafeRight(1, .15);
+                ProgramBot.driveForward(1, 3.85);
                 sleep(1300);
 
                 //Code for if partner can move away from wall
-                Bot.strafeRight(1, .15);
-                Bot.driveBack(1, 8);
+                ProgramBot.strafeRight(1, .15);
+                ProgramBot.driveBack(1, 8);
 
                 requestOpModeStop();
 

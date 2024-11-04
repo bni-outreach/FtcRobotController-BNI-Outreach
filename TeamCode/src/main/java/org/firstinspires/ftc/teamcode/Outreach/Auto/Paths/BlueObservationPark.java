@@ -18,8 +18,8 @@ public class BlueObservationPark extends BlueAlliance {
 
         while (opModeIsActive()){
 
-            Bot.strafeLeft(1, .2);
-            Bot.driveForward(1, 2.5);
+            ProgramBot.strafeLeft(1, .2);
+            ProgramBot.driveForward(1, 2.5);
 
             requestOpModeStop();
 
