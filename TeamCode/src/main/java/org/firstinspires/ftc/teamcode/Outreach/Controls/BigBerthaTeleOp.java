@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Outreach.Robots.MecanumBot;
+import org.firstinspires.ftc.teamcode.Outreach.Robots.BigBerthaBot;
 
 //@Disabled
-@TeleOp (name = "Mecanum")
-public class MecanumTeleOp extends OpMode {
+@TeleOp (name = "Big Bertha")
+public class BigBerthaTeleOp extends OpMode {
 
     double leftStickYVal;
     double leftStickXVal;
@@ -21,19 +21,19 @@ public class MecanumTeleOp extends OpMode {
     double rearRightSpeed;
 
     double powerThreshold;
-    double speedMultiply;
+    double speedMultiply = 1.0;
 
     private static final int PROFILE_1 = 1;
     private static final int PROFILE_2 = 2;
     private int currentProfile = PROFILE_2;
 
 
-    public MecanumBot BigHero6 = new MecanumBot();
+    public BigBerthaBot BigBertha = new BigBerthaBot();
 
     @Override
     public void init (){
 
-        BigHero6.initRobot(hardwareMap);
+        BigBertha.initRobot(hardwareMap);
     }
 
     public void init_loop(){}
@@ -106,10 +106,10 @@ public class MecanumTeleOp extends OpMode {
         rearRightSpeed = Range.clip(rearRightSpeed, -1, 1);
 
         // Setting motor powers (with threshold check)
-        setMotorPower(BigHero6.frontLeftMotor, frontLeftSpeed, powerThreshold, speedMultiply);
-        setMotorPower(BigHero6.frontRightMotor, frontRightSpeed, powerThreshold, speedMultiply);
-        setMotorPower(BigHero6.rearLeftMotor, rearLeftSpeed, powerThreshold, speedMultiply);
-        setMotorPower(BigHero6.rearRightMotor, rearRightSpeed, powerThreshold, speedMultiply);
+        setMotorPower(BigBertha.frontLeftMotor, frontLeftSpeed, powerThreshold, speedMultiply);
+        setMotorPower(BigBertha.frontRightMotor, frontRightSpeed, powerThreshold, speedMultiply);
+        setMotorPower(BigBertha.rearLeftMotor, rearLeftSpeed, powerThreshold, speedMultiply);
+        setMotorPower(BigBertha.rearRightMotor, rearRightSpeed, powerThreshold, speedMultiply);
     }
 
     public void setMotorPower(DcMotor motor, double speed, double threshold, double multiplier) {
@@ -131,20 +131,18 @@ public class MecanumTeleOp extends OpMode {
 
     public void speedControl(){
         if(gamepad1.dpad_up){
-            speedMultiply = 0.5;
+            speedMultiply = 1.0;
         }
         else if (gamepad1.dpad_right){
             speedMultiply = 0.75;
         }
         else if (gamepad1.dpad_down){
-            speedMultiply = 0.25;
+            speedMultiply = 0.50;
             }
         else if (gamepad1.dpad_left){
-            speedMultiply = 1;
+            speedMultiply = 0.25;
         }
-        else{
-            speedMultiply = 1;
-        }
+
     }
 
 

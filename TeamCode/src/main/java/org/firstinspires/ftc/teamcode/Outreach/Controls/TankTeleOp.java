@@ -135,11 +135,11 @@ public class TankTeleOp extends OpMode {
 
     public void speedControl () {
             if (gamepad1.dpad_right) {
-                speedMultiply = 0.25;
+                speedMultiply = 0.75;
             } else if (gamepad1.dpad_down) {
                 speedMultiply = 0.50;
             } else if (gamepad1.dpad_left) {
-                speedMultiply = 0.75;
+                speedMultiply = 0.25;
             } else if (gamepad1.dpad_up) {
                 speedMultiply = 1.00;
             }

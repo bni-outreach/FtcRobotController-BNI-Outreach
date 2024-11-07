@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Outreach.Robots.BigBerthaBot;
+import org.firstinspires.ftc.teamcode.Outreach.Robots.FancyWheelsBot;
 
 //@Disabled
-@TeleOp (name = "Driver Practice")
-public class DriverPracticeTeleOp extends OpMode {
+@TeleOp (name = "FancyWheels TeleOp")
+public class FancyWheelsTeleOp extends OpMode {
 
     double leftStickYVal;
     double leftStickXVal;
@@ -21,19 +21,19 @@ public class DriverPracticeTeleOp extends OpMode {
     double rearRightSpeed;
 
     double powerThreshold;
-    double speedMultiply;
+    double speedMultiply = 1.0;
 
     private static final int PROFILE_1 = 1;
     private static final int PROFILE_2 = 2;
     private int currentProfile = PROFILE_2;
 
 
-    public BigBerthaBot FancyWheels = new BigBerthaBot();
+    public FancyWheelsBot Fancy = new FancyWheelsBot();
 
     @Override
     public void init (){
 
-        FancyWheels.initRobot(hardwareMap);
+        Fancy.initRobot(hardwareMap);
     }
 
     public void init_loop(){}
@@ -106,10 +106,10 @@ public class DriverPracticeTeleOp extends OpMode {
         rearRightSpeed = Range.clip(rearRightSpeed, -1, 1);
 
         // Setting motor powers (with threshold check)
-        setMotorPower(FancyWheels.frontLeftMotor, frontLeftSpeed, powerThreshold, speedMultiply);
-        setMotorPower(FancyWheels.frontRightMotor, frontRightSpeed, powerThreshold, speedMultiply);
-        setMotorPower(FancyWheels.rearLeftMotor, rearLeftSpeed, powerThreshold, speedMultiply);
-        setMotorPower(FancyWheels.rearRightMotor, rearRightSpeed, powerThreshold, speedMultiply);
+        setMotorPower(Fancy.frontLeftMotor, frontLeftSpeed, powerThreshold, speedMultiply);
+        setMotorPower(Fancy.frontRightMotor, frontRightSpeed, powerThreshold, speedMultiply);
+        setMotorPower(Fancy.rearLeftMotor, rearLeftSpeed, powerThreshold, speedMultiply);
+        setMotorPower(Fancy.rearRightMotor, rearRightSpeed, powerThreshold, speedMultiply);
     }
 
     public void setMotorPower(DcMotor motor, double speed, double threshold, double multiplier) {
@@ -131,7 +131,7 @@ public class DriverPracticeTeleOp extends OpMode {
 
     public void speedControl(){
         if(gamepad1.dpad_up){
-            speedMultiply = 1.0;
+            speedMultiply = 1;
         }
         else if (gamepad1.dpad_right){
             speedMultiply = 0.75;
@@ -142,6 +142,7 @@ public class DriverPracticeTeleOp extends OpMode {
         else if (gamepad1.dpad_left){
             speedMultiply = 0.25;
         }
+
     }
 
 

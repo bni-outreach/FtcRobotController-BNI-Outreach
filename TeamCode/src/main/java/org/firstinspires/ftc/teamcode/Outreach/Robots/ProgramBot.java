@@ -2,15 +2,16 @@ package org.firstinspires.ftc.teamcode.Outreach.Robots;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.Outreach.Drivetrains.MecanumDrive;
 
-public class MecanumBot extends MecanumDrive {
+public class ProgramBot extends MecanumDrive {
 
     // Hardware Mapping Variable used by robot controller
     public HardwareMap hwBot = null;
 
     // Robot Physical Constructor used in TeleOp and Autonomous classes
-    public MecanumBot(){}
+    public ProgramBot(){}
 
     // Custom Method that will initialize the robot hardware in TeleOp and Autonomous
     public void initRobot(HardwareMap hwMap){
@@ -23,9 +24,9 @@ public class MecanumBot extends MecanumDrive {
         rearRightMotor = hwBot.dcMotor.get("rear_right_motor");//Port 3 Control
 
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         rearLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        rearRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        rearRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         setMotorRunModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setMotorRunModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

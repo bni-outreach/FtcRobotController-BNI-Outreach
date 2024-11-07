@@ -31,14 +31,14 @@ public class BigWheelTeleOp extends OpMode {
     public double rightMotorValue;
 
     // Construct the Physical Bot based on the Robot Class
-    public BigWheelBot BigBoy = new BigWheelBot();
+    public BigWheelBot BigWheel = new BigWheelBot();
 
 
     // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
-        BigBoy.initRobot(hardwareMap);
+        BigWheel.initRobot(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -61,10 +61,10 @@ public class BigWheelTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", BigBoy.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", BigBoy.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", BigBoy.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", BigBoy.rearRightMotor.getPower());
+        telemetry.addData("Front Left Motor Power: ", BigWheel.frontLeftMotor.getPower());
+        telemetry.addData("Rear Left Motor Power: ", BigWheel.rearLeftMotor.getPower());
+        telemetry.addData("Front Right Motor Power: ", BigWheel.frontRightMotor.getPower());
+        telemetry.addData("Rear Right Motor Power: ", BigWheel.rearRightMotor.getPower());
         telemetry.update();
 
     }
@@ -100,10 +100,10 @@ public class BigWheelTeleOp extends OpMode {
                 rightMotorValue = leftStickY1 + leftStickX1;
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
                 rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-                BigBoy.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-                BigBoy.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-                BigBoy.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-                BigBoy.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+                BigWheel.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+                BigWheel.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+                BigWheel.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+                BigWheel.rearRightMotor.setPower(rightMotorValue * speedMultiply);
                 break;
 
             case ARCADE2:
@@ -111,10 +111,10 @@ public class BigWheelTeleOp extends OpMode {
                 rightMotorValue = leftStickY1 + rightStickX1;
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
                 rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-                BigBoy.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-                BigBoy.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-                BigBoy.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-                BigBoy.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+                BigWheel.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+                BigWheel.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+                BigWheel.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+                BigWheel.rearRightMotor.setPower(rightMotorValue * speedMultiply);
                 break;
 
             case TANK:
@@ -124,10 +124,10 @@ public class BigWheelTeleOp extends OpMode {
                 double powerFRM = rightStickY1 * speedMultiply;
                 double powerRRM = rightStickY1 * speedMultiply;
 
-                BigBoy.frontLeftMotor.setPower(powerFLM);
-                BigBoy.rearLeftMotor.setPower(powerRLM);
-                BigBoy.frontRightMotor.setPower(powerFRM);
-                BigBoy.rearRightMotor.setPower(powerRRM);
+                BigWheel.frontLeftMotor.setPower(powerFLM);
+                BigWheel.rearLeftMotor.setPower(powerRLM);
+                BigWheel.frontRightMotor.setPower(powerFRM);
+                BigWheel.rearRightMotor.setPower(powerRRM);
                 break;
         }
     }

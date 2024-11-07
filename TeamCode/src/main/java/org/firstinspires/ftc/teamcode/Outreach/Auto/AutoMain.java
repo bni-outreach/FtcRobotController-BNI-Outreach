@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.Outreach.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.Outreach.Robots.MecanumBot;
+import org.firstinspires.ftc.teamcode.Outreach.Robots.BigBerthaBot;
 
 public abstract class AutoMain extends LinearOpMode {
 
     // Constructor for the Competition Robot for the Blue Team
-    public MecanumBot ProgramBot = new MecanumBot();
+    public BigBerthaBot ProgramBot = new BigBerthaBot();
 
     // Helper Method for Initializing, Setting LinearOp, and Updating Telemetry
     public void autoStartUp(){
