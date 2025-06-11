@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.FancyWheelsBot;
 
 //@Disabled
-@TeleOp (name = "FancyWheels TeleOp")
+@TeleOp (name = "FancyWheels")
 public class FancyWheelsTeleOp extends OpMode {
 
     double leftStickYVal;

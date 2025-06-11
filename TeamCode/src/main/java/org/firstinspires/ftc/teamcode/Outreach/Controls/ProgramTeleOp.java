@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.ProgramBot;
 
 //@Disabled
-@TeleOp (name = "ProgramBot TeleOp")
+@TeleOp (name = "ProgramBot")
 public class ProgramTeleOp extends OpMode {
 
     double leftStickYVal;
