@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Outreach.Robots;
+package org.firstinspires.ftc.teamcode.Outreach.Controls;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @TeleOp (name = "Rapid Revolvers")
-public class rapidRevolvers extends LinearOpMode {
+public class RapidRevolversTeleOp extends LinearOpMode {
     // Before running, we will need to make sure the control hub and driver station is in the correct version
 
     private DcMotor mainMotor;
