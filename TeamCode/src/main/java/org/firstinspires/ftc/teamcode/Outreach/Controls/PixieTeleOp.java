@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Competition.Z20232024CenterStage.Blue17241.Robots.BlueBot;
 
 //@Disabled
-@TeleOp (name = "Pixie")
+@TeleOp (name = "CenterStage Pixie")
 public class PixieTeleOp extends OpMode {
     double leftStickYVal;
     double leftStickXVal;
