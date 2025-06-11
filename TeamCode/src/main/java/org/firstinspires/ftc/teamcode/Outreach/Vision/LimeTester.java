@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Outreach.Vision;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.VisionBot;
 
+@Disabled
 @TeleOp(name = "Limelight Tester")
 public class LimeTester extends LinearOpMode {
 

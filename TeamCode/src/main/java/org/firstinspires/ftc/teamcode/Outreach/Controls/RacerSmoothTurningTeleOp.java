@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
 //@Disabled
-@TeleOp(name = "Tank:Differential:SmoothTurning")
+@TeleOp(name = "Racer:Differential:SmoothTurning")
 
-public class TankSmoothTurningTeleOp extends OpMode {
+public class RacerSmoothTurningTeleOp extends OpMode {
 
     //TeleOp Driving Behavior Variables
     public double speedMultiply = 1;
