@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.RingRangerBot;
 
 
-@TeleOp(name = "Teleop_CompetitionBot - Ringed Ranger", group = "3")
-@Disabled
+@TeleOp(name = "Ringed Ranger")
+//@Disabled
 public class RingRangerTeleOp extends OpMode {
 
     // Variables & Constants specific to TeleLabBot

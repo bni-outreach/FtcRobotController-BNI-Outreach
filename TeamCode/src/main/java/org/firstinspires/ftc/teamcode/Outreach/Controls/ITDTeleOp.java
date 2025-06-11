@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.ITDBot;
 import org.firstinspires.ftc.teamcode.Outreach.Sensors.ColorDistSensor;
 import org.firstinspires.ftc.teamcode.Outreach.Sensors.RGBLight;
 
-@TeleOp (name = "IntoDeepBot")
+@TeleOp (name = "ITD Barry Pirate Ship")
 public class ITDTeleOp extends OpMode {
 
     double leftStickYVal;

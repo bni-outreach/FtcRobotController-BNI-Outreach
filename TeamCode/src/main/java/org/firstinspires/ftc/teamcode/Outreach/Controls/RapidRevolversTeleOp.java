@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.Outreach.Controls;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Disabled
 @TeleOp (name = "Rapid Revolvers")
 public class RapidRevolversTeleOp extends LinearOpMode {
     // Before running, we will need to make sure the control hub and driver station is in the correct version
