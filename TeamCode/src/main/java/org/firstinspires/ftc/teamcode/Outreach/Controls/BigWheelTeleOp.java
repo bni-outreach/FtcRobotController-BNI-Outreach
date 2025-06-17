@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Outreach.Controls;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Outreach.Robots.BigWheelBot;
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.BigWheelBot;
 
 
 //@Disabled
-@TeleOp(name = "Big Wheel")
+@TeleOp(name = "Big Wheels")
 
 public class BigWheelTeleOp extends OpMode {
 
@@ -19,7 +20,14 @@ public class BigWheelTeleOp extends OpMode {
         ARCADE1, ARCADE2, TANK
     }
 
+    public enum LoadStates {
+        READY, LOAD, DELAY, UNLOAD
+    }
+
+    public LoadStates loadState = LoadStates.READY;
     public Style driverStyle = Style.ARCADE1;
+
+    ElapsedTime timer = new ElapsedTime();
 
     // GamePad Variables
     public float leftStickY1;
@@ -39,6 +47,9 @@ public class BigWheelTeleOp extends OpMode {
     public void init() {
 
         BigWheel.initRobot(hardwareMap);
+        BigWheel.initFlyWheels(hardwareMap);
+        BigWheel.initWormGears(hardwareMap);
+        BigWheel.initServos(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -54,6 +65,11 @@ public class BigWheelTeleOp extends OpMode {
         getController();
         speedControl();
         driveControl();
+        flyWheelControl();
+        wormGearControl();
+        servoControlManual();
+        servoControlAutomatic();
+        DiscLaunchControl();
         telemetryOutput();
 
     }
@@ -144,6 +160,88 @@ public class BigWheelTeleOp extends OpMode {
             } else if (gamepad1.dpad_up) {
                 speedMultiply = 1.00;
             }
+    }
+
+    public void flyWheelControl()
+    {
+        if (gamepad2.left_bumper) {
+            BigWheel.rotateFlyWheel1(1.0);
+            BigWheel.rotateFlyWheel2(-1.0);
+        }
+
+        if (gamepad2.right_bumper) {
+            BigWheel.stopFlyWheel1();
+            BigWheel.stopFlyWheel2();
+        }
+
+    }
+
+    public void wormGearControl()
+    {
+        if (gamepad2.dpad_up ) {
+            BigWheel.shooterTiltUp(0.90);
+        }
+        else if (gamepad2.dpad_down) {
+            BigWheel.shooterTiltDown(-0.90);
+        }
+        else
+        {
+            BigWheel.setShooterTiltStop();
+        }
+
+        if (gamepad2.dpad_left) {
+            BigWheel.shooterPanLeft(0.90);
+        }
+        else if (gamepad2.dpad_right) {
+            BigWheel.shooterPanRight(-0.90);
+        }
+        else
+        {
+            BigWheel.setShooterPanStop();
+        }
+
+    }
+
+
+
+    public void servoControlManual() {
+        if (gamepad2.left_trigger > 0.1) {
+            BigWheel.loadDiscFully();
+
+        }
+
+        if (gamepad2.right_trigger > 0.1) {
+            BigWheel.unloadDisc();
+        }
+    }
+
+    public void servoControlAutomatic() {
+        if (gamepad2.y) {
+            loadState = LoadStates.LOAD;
+
+        }
+
+    }
+
+    public void DiscLaunchControl() {
+        switch (loadState) {
+            case LOAD:
+                BigWheel.loadDiscFully();
+                loadState = LoadStates.DELAY;
+                timer.reset();
+                break;
+            case DELAY:
+                if (timer.time() > .5) {
+                    loadState = LoadStates.UNLOAD;
+                }
+                break;
+            case UNLOAD:
+                BigWheel.unloadDisc();
+                loadState = LoadStates.READY;
+                break;
+            case READY:
+                break;
+        }
     }
 
 
