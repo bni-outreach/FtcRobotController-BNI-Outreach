@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.Outreach.Robots.RacerBot;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
@@ -30,14 +31,14 @@ public class RacerSmoothTurningTeleOp extends OpMode {
     public double rightMotorValue;
 
     // Construct the Physical Bot based on the Robot Class
-    public TankBot Eddie = new TankBot();
+    public RacerBot Racer = new RacerBot();
 
 
     // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
-        Eddie.initRobot(hardwareMap);
+        Racer.initRobot(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -60,10 +61,10 @@ public class RacerSmoothTurningTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", Eddie.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", Eddie.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", Eddie.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", Eddie.rearRightMotor.getPower());
+        telemetry.addData("Front Left Motor Power: ", Racer.frontLeftMotor.getPower());
+        telemetry.addData("Rear Left Motor Power: ", Racer.rearLeftMotor.getPower());
+        telemetry.addData("Front Right Motor Power: ", Racer.frontRightMotor.getPower());
+        telemetry.addData("Rear Right Motor Power: ", Racer.rearRightMotor.getPower());
         telemetry.update();
     }
 
@@ -107,10 +108,10 @@ public class RacerSmoothTurningTeleOp extends OpMode {
 
         leftMotorValue = Range.clip(leftMotorValue, -1, 1);
         rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-        Eddie.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-        Eddie.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-        Eddie.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-        Eddie.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+        Racer.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+        Racer.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+        Racer.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+        Racer.rearRightMotor.setPower(rightMotorValue * speedMultiply);
     }
 
 

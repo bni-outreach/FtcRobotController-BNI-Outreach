@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
+import org.firstinspires.ftc.teamcode.Outreach.Robots.RacerBot;
 
 
 //@Disabled
@@ -32,14 +32,14 @@ public class RacerTurnSensitivityTeleOp extends OpMode {
     public double turnSensitivity = 1.5;
 
     // Construct the Physical Bot based on the Robot Class
-    public TankBot Bruno = new TankBot();
+    public RacerBot Racer = new RacerBot();
 
 
     // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
-        Bruno.initRobot(hardwareMap);
+        Racer.initRobot(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -62,10 +62,10 @@ public class RacerTurnSensitivityTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", Bruno.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", Bruno.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", Bruno.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", Bruno.rearRightMotor.getPower());
+        telemetry.addData("Front Left Motor Power: ", Racer.frontLeftMotor.getPower());
+        telemetry.addData("Rear Left Motor Power: ", Racer.rearLeftMotor.getPower());
+        telemetry.addData("Front Right Motor Power: ", Racer.frontRightMotor.getPower());
+        telemetry.addData("Rear Right Motor Power: ", Racer.rearRightMotor.getPower());
         telemetry.update();
 
     }
@@ -103,10 +103,10 @@ public class RacerTurnSensitivityTeleOp extends OpMode {
 
         leftMotorValue = Range.clip(leftMotorValue, -1, 1);
         rightMotorValue = Range.clip(rightMotorValue, -1, 1);
-        Bruno.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
-        Bruno.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
-        Bruno.frontRightMotor.setPower(rightMotorValue * speedMultiply);
-        Bruno.rearRightMotor.setPower(rightMotorValue * speedMultiply);
+        Racer.frontLeftMotor.setPower(leftMotorValue * speedMultiply);
+        Racer.rearLeftMotor.setPower(leftMotorValue * speedMultiply);
+        Racer.frontRightMotor.setPower(rightMotorValue * speedMultiply);
+        Racer.rearRightMotor.setPower(rightMotorValue * speedMultiply);
     }
 
     public void speedControl () {

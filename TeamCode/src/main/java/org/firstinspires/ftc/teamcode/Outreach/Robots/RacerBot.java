@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Outreach.Robots;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Outreach.Drivetrains.FourMotorDrive;
@@ -27,9 +28,9 @@ public class RacerBot extends FourMotorDrive {
 
         //Sets the direction of the robot's motors based on physical placement
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        rearRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        rearLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        rearRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        rearLeftMotor.setDirection(DcMotor.Direction.FORWARD);
 
         //Define this robot run modes
         setMotorRunModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
