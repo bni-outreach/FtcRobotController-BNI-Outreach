@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.CampBot;
 
 //@Disabled
-@TeleOp(name = "CampBot: Two Driver")
+@TeleOp(name = "Summer CampBot: Two Driver")
 public class CampBotTeleOp_Multiple extends OpMode {
 
     //TeleOp Driving Behavior Variables
