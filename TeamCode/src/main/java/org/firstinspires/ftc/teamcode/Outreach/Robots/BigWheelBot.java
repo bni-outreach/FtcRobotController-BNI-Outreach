@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Outreach.Robots;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,6 +19,8 @@ public class BigWheelBot extends TankFourMotorDrive {
     // Servos for Mechanisms
     public Servo discLoader;
 
+    // Limelight
+    public Limelight3A cam = null;
 
     // Hardware Mapping Variable used by robot controller
     public HardwareMap hwBot = null;
@@ -52,7 +55,13 @@ public class BigWheelBot extends TankFourMotorDrive {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+    }
 
+    // **** Initialize Limelight Camera ****
+    public void initLimelight(HardwareMap hwMap) {
+        hwBot = hwMap;
+        cam = hwBot.get(Limelight3A.class, "limelight");
+        cam.setPollRateHz(100);
     }
 
     // **** Initialize Fly Wheel Hardware ****

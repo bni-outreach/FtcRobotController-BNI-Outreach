@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Outreach.Controls;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,16 +17,22 @@ public class BigWheelTeleOp extends OpMode {
 
     //TeleOp Driving Behavior Variables
     public double speedMultiply = 1;
+
     public enum Style {
         ARCADE1, ARCADE2, TANK
     }
+    public Style driverStyle = Style.ARCADE1;
 
     public enum LoadStates {
         READY, LOAD, DELAY, UNLOAD
     }
-
     public LoadStates loadState = LoadStates.READY;
-    public Style driverStyle = Style.ARCADE1;
+
+
+    public enum D2Style {
+        Manual, Auto
+    }
+    public D2Style d2Style = D2Style.Manual;
 
     ElapsedTime timer = new ElapsedTime();
 
@@ -37,6 +44,20 @@ public class BigWheelTeleOp extends OpMode {
 
     public double leftMotorValue;
     public double rightMotorValue;
+
+    //Limelight Variables
+    public double tXErrorMultiplier = .02;
+    public double tYErrorMultiplier = .015;
+    public double errorOffset = 7;
+    public double minimumCommand = 0.1;
+    public double maximumCommand = 0.4;
+
+    //Limelight Results
+    private LLResult result = null;
+
+    // For toggling D2Style with gamepad2.a
+    private boolean prevD2A = false;
+
 
     // Construct the Physical Bot based on the Robot Class
     public BigWheelBot BigWheel = new BigWheelBot();
@@ -50,6 +71,7 @@ public class BigWheelTeleOp extends OpMode {
         BigWheel.initFlyWheels(hardwareMap);
         BigWheel.initWormGears(hardwareMap);
         BigWheel.initServos(hardwareMap);
+        BigWheel.initLimelight(hardwareMap);
 
         leftStickY1 = 0;
         leftStickX1 = 0;
@@ -58,17 +80,42 @@ public class BigWheelTeleOp extends OpMode {
 
     }
 
-    // TeleOp Loop Method.  This start AFTER clicking the Play Button on the Driver Station Phone
+    @Override
+    public void start() {
+        BigWheel.cam.start();
+        BigWheel.cam.pipelineSwitch(0);
 
+    }
+
+
+    @Override
     public void loop() {
 
         getController();
+
+        // Toggle D2Style with gamepad2.a (edge detection)
+        if (gamepad2.a && !prevD2A) {
+            if (d2Style == D2Style.Manual) {
+                d2Style = D2Style.Auto;
+            } else {
+                d2Style = D2Style.Manual;
+            }
+        }
+        prevD2A = gamepad2.a;
+
         speedControl();
         driveControl();
-        flyWheelControl();
-        wormGearControl();
-        servoControlManual();
-        servoControlAutomatic();
+
+        if (d2Style == D2Style.Manual) {
+            flyWheelControl();
+            wormGearControl();
+            servoControlManual();
+            servoControlAutomatic();
+        }
+        else if (d2Style == D2Style.Auto) {
+            autoTurret();
+        }
+
         DiscLaunchControl();
         telemetryOutput();
 
@@ -202,8 +249,6 @@ public class BigWheelTeleOp extends OpMode {
 
     }
 
-
-
     public void servoControlManual() {
         if (gamepad2.left_trigger > 0.1) {
             BigWheel.loadDiscFully();
@@ -244,5 +289,72 @@ public class BigWheelTeleOp extends OpMode {
         }
     }
 
+
+    public void getCamResult() {
+        result = BigWheel.cam.getLatestResult();
+    }
+
+    public boolean lastResultValid() {
+        return result != null && result.isValid();
+    }
+
+    public void autoTurret() {
+        BigWheel.unloadDisc();
+        BigWheel.rotateFlyWheel1(1);
+        BigWheel.rotateFlyWheel2(-1);
+        getCamResult();
+        if (lastResultValid()) {
+            double tx = result.getTx();
+            double ty = result.getTy();
+            double ta = result.getTa();
+
+            // Add deadband around errorOffset and correct pan direction
+            if (tx > errorOffset + 0.01) {
+                BigWheel.shooterPanRight(tx * tXErrorMultiplier);
+                telemetry.addLine("Pan Right: " + tx);
+            } else if (tx < -(errorOffset + 0.01)) {
+                BigWheel.shooterPanLeft(tx * tXErrorMultiplier);
+                telemetry.addLine("Pan Left: " + tx);
+            } else {
+                BigWheel.setShooterPanStop();
+                telemetry.addLine("Pan Stop");
+                try {
+                    Thread.sleep(50);  // Small delay to ensure motor stops
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            // Add deadband around errorOffset and correct tilt direction
+            if (ty > errorOffset + 0.01) {
+                BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
+                telemetry.addLine("Tilt Up: " + ty);
+            } else if (ty < -(errorOffset + 0.01)) {
+                BigWheel.shooterTiltDown(ty * tYErrorMultiplier);
+                telemetry.addLine("Tilt Down: " + ty);
+            } else {
+                BigWheel.setShooterTiltStop();
+                telemetry.addLine("Tilt Stop");
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            if (ta > 10 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset) {
+                BigWheel.loadDiscFully();
+                telemetry.addLine("Load");
+                d2Style = D2Style.Manual;
+            }
+
+            // Add debug telemetry
+            telemetry.addData("TX", tx);
+            telemetry.addData("TY", ty);
+            telemetry.addData("TA", ta);
+            telemetry.addData("Pan Power", BigWheel.shooterPan.getPower());
+            telemetry.addData("Tilt Power", BigWheel.shooterTilt.getPower());
+        }
+    }
 
 }

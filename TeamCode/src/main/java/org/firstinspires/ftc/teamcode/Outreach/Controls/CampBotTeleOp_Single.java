@@ -218,6 +218,7 @@ public class CampBotTeleOp_Single extends OpMode {
     // Rubber Duck Bucket Lift
     public void servoTwoControl() {
         if (gamepad1.dpad_up) {
+            loadState = LoadStates.OPEN_GATE;
             loadStateControl();
         }
 
@@ -243,7 +244,7 @@ public class CampBotTeleOp_Single extends OpMode {
                 timer.reset();
                 break;
             case DELAY1:
-                if (timer.time() > .5) {
+                if (timer.time() > 1.5) {
                     loadState = LoadStates.UNLOAD_BUCKET;
                 }
                 break;
@@ -253,7 +254,7 @@ public class CampBotTeleOp_Single extends OpMode {
                 timer.reset();
                 break;
             case DELAY2:
-                if (timer.time() > .5) {
+                if (timer.time() > 1.0) {
                     loadState = LoadStates.LOAD_BUCKET;
                 }
                 break;
@@ -263,7 +264,7 @@ public class CampBotTeleOp_Single extends OpMode {
                 timer.reset();
                 break;
             case DELAY3:
-                if (timer.time() > .5) {
+                if (timer.time() > 1.5) {
                     loadState = LoadStates.CLOSE_GATE;
                 }
                 break;
