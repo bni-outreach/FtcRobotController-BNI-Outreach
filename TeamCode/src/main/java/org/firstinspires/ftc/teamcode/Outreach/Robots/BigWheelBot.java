@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Outreach.Drivetrains.TankFourMotorDrive;
 
@@ -15,6 +16,7 @@ public class BigWheelBot extends TankFourMotorDrive {
     public DcMotor shooterTilt;
     public DcMotor flyWheel1;
     public DcMotor flyWheel2;
+    public VoltageSensor voltageSensor;
 
     // Servos for Mechanisms
     public Servo discLoader;
@@ -74,6 +76,8 @@ public class BigWheelBot extends TankFourMotorDrive {
         flyWheel2 = hwBot.dcMotor.get("fly_wheel2");                        //Expansion Port 3
         flyWheel2.setDirection(DcMotorSimple.Direction.FORWARD);
         flyWheel2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        voltageSensor = hwBot.voltageSensor.iterator().next();
     }
 
 

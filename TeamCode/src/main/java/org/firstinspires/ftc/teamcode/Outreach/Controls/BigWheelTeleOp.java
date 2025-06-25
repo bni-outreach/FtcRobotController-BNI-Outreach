@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Outreach.Controls;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,20 +22,24 @@ public class BigWheelTeleOp extends OpMode {
     public enum Style {
         ARCADE1, ARCADE2, TANK
     }
+
     public Style driverStyle = Style.ARCADE1;
 
     public enum LoadStates {
         READY, LOAD, DELAY, UNLOAD
     }
+
     public LoadStates loadState = LoadStates.READY;
 
 
     public enum D2Style {
         Manual, Auto
     }
+
     public D2Style d2Style = D2Style.Manual;
 
     ElapsedTime timer = new ElapsedTime();
+
 
     // GamePad Variables
     public float leftStickY1;
@@ -93,7 +98,8 @@ public class BigWheelTeleOp extends OpMode {
 
         getController();
 
-        // Toggle D2Style with gamepad2.a (edge detection)
+        // Toggle D2Style with gamepad2.a
+        // This runs only on the rising edge: when button is just pressed
         if (gamepad2.a && !prevD2A) {
             if (d2Style == D2Style.Manual) {
                 d2Style = D2Style.Auto;
@@ -111,8 +117,7 @@ public class BigWheelTeleOp extends OpMode {
             wormGearControl();
             servoControlManual();
             servoControlAutomatic();
-        }
-        else if (d2Style == D2Style.Auto) {
+        } else if (d2Style == D2Style.Auto) {
             autoTurret();
         }
 
@@ -132,7 +137,9 @@ public class BigWheelTeleOp extends OpMode {
 
     }
 
-    /**  ********  DRIVING METHODS USING GAMEPAD 1 *************      **/
+    /**
+     * *******  DRIVING METHODS USING GAMEPAD 1 *************
+     **/
 
     public void getController() {
         leftStickY1 = gamepad1.left_stick_y;
@@ -196,54 +203,52 @@ public class BigWheelTeleOp extends OpMode {
     }
 
 
-
-    public void speedControl () {
-            if (gamepad1.dpad_right) {
-                speedMultiply = 0.25;
-            } else if (gamepad1.dpad_down) {
-                speedMultiply = 0.50;
-            } else if (gamepad1.dpad_left) {
-                speedMultiply = 0.75;
-            } else if (gamepad1.dpad_up) {
-                speedMultiply = 1.00;
-            }
+    public void speedControl() {
+        if (gamepad1.dpad_right) {
+            speedMultiply = 0.25;
+        } else if (gamepad1.dpad_down) {
+            speedMultiply = 0.50;
+        } else if (gamepad1.dpad_left) {
+            speedMultiply = 0.75;
+        } else if (gamepad1.dpad_up) {
+            speedMultiply = 1.00;
+        }
     }
 
-    public void flyWheelControl()
-    {
+    public void flyWheelControl() {
+        double nominalVoltage = 12.0;
+        double currentVoltage = BigWheel.voltageSensor.getVoltage();
+        double compensatedPower = nominalVoltage / currentVoltage;
+        compensatedPower = Math.min(compensatedPower, 1.0);  // Cap at 100% power
+
         if (gamepad2.left_bumper) {
-            BigWheel.rotateFlyWheel1(1.0);
-            BigWheel.rotateFlyWheel2(-1.0);
+            BigWheel.rotateFlyWheel1(compensatedPower);
+            BigWheel.rotateFlyWheel2(-compensatedPower);
         }
 
         if (gamepad2.right_bumper) {
             BigWheel.stopFlyWheel1();
             BigWheel.stopFlyWheel2();
         }
+        telemetry.addData("Battery Voltage", currentVoltage);
+        telemetry.addData("Flywheel Power", compensatedPower);
 
     }
 
-    public void wormGearControl()
-    {
-        if (gamepad2.dpad_up ) {
+    public void wormGearControl() {
+        if (gamepad2.dpad_up) {
             BigWheel.shooterTiltUp(0.90);
-        }
-        else if (gamepad2.dpad_down) {
+        } else if (gamepad2.dpad_down) {
             BigWheel.shooterTiltDown(-0.90);
-        }
-        else
-        {
+        } else {
             BigWheel.setShooterTiltStop();
         }
 
         if (gamepad2.dpad_left) {
             BigWheel.shooterPanLeft(0.90);
-        }
-        else if (gamepad2.dpad_right) {
+        } else if (gamepad2.dpad_right) {
             BigWheel.shooterPanRight(-0.90);
-        }
-        else
-        {
+        } else {
             BigWheel.setShooterPanStop();
         }
 
@@ -299,14 +304,21 @@ public class BigWheelTeleOp extends OpMode {
     }
 
     public void autoTurret() {
+
+        double nominalVoltage = 12.0;
+        double currentVoltage = BigWheel.voltageSensor.getVoltage();
+        double compensatedPower = nominalVoltage / currentVoltage;
+        compensatedPower = Math.min(compensatedPower, 1.0);  // Cap at 100% power
+
         BigWheel.unloadDisc();
-        BigWheel.rotateFlyWheel1(1);
-        BigWheel.rotateFlyWheel2(-1);
+        BigWheel.rotateFlyWheel1(compensatedPower);
+        BigWheel.rotateFlyWheel2(-compensatedPower);
+
         getCamResult();
         if (lastResultValid()) {
-            double tx = result.getTx();
-            double ty = result.getTy();
-            double ta = result.getTa();
+            double tx = result.getTx();  // Horizontal offset from center (-27 to 27 deg)
+            double ty = result.getTy();  // Vertical offset from center
+            double ta = result.getTa();  // Target area (size) as % of image
 
             // Add deadband around errorOffset and correct pan direction
             if (tx > errorOffset + 0.01) {
@@ -354,6 +366,90 @@ public class BigWheelTeleOp extends OpMode {
             telemetry.addData("TA", ta);
             telemetry.addData("Pan Power", BigWheel.shooterPan.getPower());
             telemetry.addData("Tilt Power", BigWheel.shooterTilt.getPower());
+            telemetry.addData("Battery Voltage", currentVoltage);
+            telemetry.addData("Flywheel Power", compensatedPower);
+        }
+    }
+
+    public void autoTurretWithVisionModel() {
+        double confidenceThreshold = 0.7;
+
+        // Get latest vision result from camera
+        LLResult visionResult = BigWheel.cam.getLatestResult();
+
+        if (visionResult != null && visionResult.isValid() && !visionResult.getDetectorResults().isEmpty()) {
+            for (Object obj : visionResult.getDetectorResults()) {
+                LLResultTypes.DetectorResult detector = (LLResultTypes.DetectorResult) obj;
+                String detectedLabel = detector.getClassName();
+                double confidence = detector.getConfidence();
+
+                if ("person".equalsIgnoreCase(detectedLabel) && confidence >= confidenceThreshold) {
+
+                    double nominalVoltage = 12.0;
+                    double currentVoltage = BigWheel.voltageSensor.getVoltage();
+                    double compensatedPower = nominalVoltage / currentVoltage;
+                    compensatedPower = Math.min(compensatedPower, 1.0);  // Cap at 100% power
+
+                    BigWheel.unloadDisc();
+                    BigWheel.rotateFlyWheel1(compensatedPower);
+                    BigWheel.rotateFlyWheel2(-compensatedPower);
+
+                    double tx = visionResult.getTx();  // Horizontal offset from center (-27 to 27 deg)
+                    double ty = visionResult.getTy();  // Vertical offset from center
+                    double ta = visionResult.getTa();  // Target area (size) as % of image
+
+                    // Pan control with deadband around errorOffset
+                    if (tx > errorOffset + 0.01) {
+                        BigWheel.shooterPanRight(tx * tXErrorMultiplier);
+                        telemetry.addLine("Pan Right: " + tx);
+                    } else if (tx < -(errorOffset + 0.01)) {
+                        BigWheel.shooterPanLeft(tx * tXErrorMultiplier);
+                        telemetry.addLine("Pan Left: " + tx);
+                    } else {
+                        BigWheel.setShooterPanStop();
+                        telemetry.addLine("Pan Stop");
+                        try {
+                            Thread.sleep(50);  // Small delay to ensure motor stops
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+
+                    // Tilt control with deadband around errorOffset
+                    if (ty > errorOffset + 0.01) {
+                        BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
+                        telemetry.addLine("Tilt Up: " + ty);
+                    } else if (ty < -(errorOffset + 0.01)) {
+                        BigWheel.shooterTiltDown(ty * tYErrorMultiplier);
+                        telemetry.addLine("Tilt Down: " + ty);
+                    } else {
+                        BigWheel.setShooterTiltStop();
+                        telemetry.addLine("Tilt Stop");
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+
+                    // If target area and offsets are within range, set load state to LOAD (use state machine)
+                    if (ta > 10 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset) {
+                        loadState = LoadStates.LOAD;
+                        telemetry.addLine("Load");
+                    }
+
+                    telemetry.addData("Vision Label", detectedLabel);
+                    telemetry.addData("Confidence", confidence);
+                    telemetry.addData("TX", tx);
+                    telemetry.addData("TY", ty);
+                    telemetry.addData("TA", ta);
+                    telemetry.addData("Pan Power", BigWheel.shooterPan.getPower());
+                    telemetry.addData("Tilt Power", BigWheel.shooterTilt.getPower());
+                    telemetry.addData("Battery Voltage", currentVoltage);
+                    telemetry.addData("Flywheel Power", compensatedPower);
+                    telemetry.update();
+                }
+            }
         }
     }
 
