@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Outreach.Controls;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,9 +8,10 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Outreach.Robots.CampBot;
 
-//@Disabled
+// Charles, Teddy, John Ross
+@Disabled
 @TeleOp(name = "Summer CampBot: Two Driver")
-public class CampBotTeleOp_Multiple extends OpMode {
+public class CampBotTeleOp_MultipleBotA extends OpMode {
 
     //TeleOp Driving Behavior Variables
     public double speedMultiply = 1.0;
@@ -38,9 +40,9 @@ public class CampBotTeleOp_Multiple extends OpMode {
     public double rightSidePower;
 
     //
-    public boolean servo1Ready = true;
-    public boolean servo2Ready = true;
-    public boolean servo3Ready= true;
+    public boolean GateOpen = true;
+    public boolean GateClosed = true;
+
 
 
     // Construct the Physical Bot based on the Robot Class
@@ -83,7 +85,7 @@ public class CampBotTeleOp_Multiple extends OpMode {
         servoThreeControl();
 
         //Load Controller Methods using States
-        loadStateControl();
+        //loadStateControl();
 
         //Telemetry Controller
         telemetryOutput();
@@ -216,29 +218,39 @@ public class CampBotTeleOp_Multiple extends OpMode {
 
     // Rubber Duck Bucket Lift
     public void servoTwoControl() {
-        if (gamepad2.dpad_up) {
-            loadState = LoadStates.OPEN_GATE;
-            loadStateControl();
+        if (gamepad2.dpad_up && GateOpen) {
+            Bot.retractServo2();
+            //Bot.extendServo2();
         }
-
+        else if (gamepad2.dpad_down && GateOpen) {
+            Bot.extendServo2();
+            //Bot.retractServo2();
+        }
     }
 
     // Rubber Duck Capture Gate
     public void servoThreeControl() {
         if (gamepad2.dpad_left) {
+            GateOpen = false;
+            GateClosed = true;
             Bot.extendServo3();
         }
 
         if (gamepad2.dpad_right) {
+            GateOpen = true;
+            GateClosed = false;
             Bot.retractServo3();
         }
     }
 
+
+    // State Controller
     // State Controller
     public void loadStateControl() {
         switch (loadState) {
             case OPEN_GATE:
-                Bot.extendServo3();
+                //Bot.extendServo3();
+                Bot.retractServo3();;
                 loadState = LoadStates.DELAY1;
                 timer.reset();
                 break;
@@ -268,14 +280,13 @@ public class CampBotTeleOp_Multiple extends OpMode {
                 }
                 break;
             case CLOSE_GATE:
-                Bot.retractServo3();
+                Bot.extendServo3();
                 loadState = LoadStates.READY;
                 break;
             case READY:
                 break;
         }
     }
-
 
 
 

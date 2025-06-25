@@ -86,7 +86,7 @@ public class CampBot extends TwoMotorDrive {
     public void initServo2(HardwareMap hwMap) {
         hwBot = hwMap;
         servo2 = hwBot.get(Servo.class, "servo2");          //Control Hub Servo Port 1
-        servo2.setDirection(Servo.Direction.FORWARD);
+        servo2.setDirection(Servo.Direction.REVERSE);
     }
 
 
