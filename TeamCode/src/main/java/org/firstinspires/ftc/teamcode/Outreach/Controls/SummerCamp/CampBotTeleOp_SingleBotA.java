@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Outreach.Controls;
+package org.firstinspires.ftc.teamcode.Outreach.Controls.SummerCamp;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.CampBot;
 
 // Charles, Teddy, John Ross
 @Disabled
-@TeleOp(name = "Summer CampBot: Two Driver")
-public class CampBotTeleOp_MultipleBotA extends OpMode {
+@TeleOp(name = "Summer CampBot: Single Driver")
+public class CampBotTeleOp_SingleBotA extends OpMode {
 
     //TeleOp Driving Behavior Variables
     public double speedMultiply = 1.0;
@@ -42,8 +42,6 @@ public class CampBotTeleOp_MultipleBotA extends OpMode {
     //
     public boolean GateOpen = true;
     public boolean GateClosed = true;
-
-
 
     // Construct the Physical Bot based on the Robot Class
     public CampBot Bot = new CampBot();
@@ -84,6 +82,7 @@ public class CampBotTeleOp_MultipleBotA extends OpMode {
         servoTwoControl();
         servoThreeControl();
 
+
         //Load Controller Methods using States
         //loadStateControl();
 
@@ -121,15 +120,15 @@ public class CampBotTeleOp_MultipleBotA extends OpMode {
 
     public void driveControl() {
 
-        if (gamepad1.a) {
-            driverStyle = Style.ARCADE1;
-        }
-        if (gamepad1.b) {
-            driverStyle = Style.ARCADE2;
-        }
-        if (gamepad1.y) {
-            driverStyle = Style.TANK;
-        }
+//        if (gamepad1.a) {
+//            driverStyle = Style.ARCADE1;
+//        }
+//        if (gamepad1.b) {
+//            driverStyle = Style.ARCADE2;
+//        }
+//        if (gamepad1.y) {
+//            driverStyle = Style.TANK;
+//        }
 
         switch (driverStyle) {
 
@@ -179,10 +178,10 @@ public class CampBotTeleOp_MultipleBotA extends OpMode {
 
     public void motor1Control()
     {
-        if (gamepad2.left_trigger > 0.1) {
+        if (gamepad1.left_trigger > 0.1) {
             Bot.rotateMotor1(1.0);
         }
-        else if (gamepad2.right_trigger > 0.1) {
+        else if (gamepad1.right_trigger > 0.1) {
             Bot.rotateMotor1(-1.0);
         }
         else
@@ -192,10 +191,10 @@ public class CampBotTeleOp_MultipleBotA extends OpMode {
     }
     public void motor2Control()
     {
-        if (gamepad2.y) {
+        if (gamepad2.left_bumper) {
             Bot.rotateMotor2(1.0);
         }
-        else if (gamepad2.b) {
+        else if (gamepad2.right_bumper) {
             Bot.rotateMotor2(-1.0);
         }
         else
@@ -207,22 +206,22 @@ public class CampBotTeleOp_MultipleBotA extends OpMode {
 
     // Flag or Rubber Duck Hook
     public void servoOneControl() {
-        if (gamepad2.left_bumper) {
+        if (gamepad1.left_bumper) {
             Bot.extendServo1();
         }
 
-        if (gamepad2.right_bumper) {
+        if (gamepad1.right_bumper) {
             Bot.retractServo1();
         }
     }
 
     // Rubber Duck Bucket Lift
     public void servoTwoControl() {
-        if (gamepad2.dpad_up && GateOpen) {
+        if (gamepad1.dpad_up && GateOpen) {
             Bot.retractServo2();
             //Bot.extendServo2();
         }
-        else if (gamepad2.dpad_down && GateOpen) {
+        else if (gamepad1.dpad_down && GateOpen) {
             Bot.extendServo2();
             //Bot.retractServo2();
         }
@@ -230,21 +229,19 @@ public class CampBotTeleOp_MultipleBotA extends OpMode {
 
     // Rubber Duck Capture Gate
     public void servoThreeControl() {
-        if (gamepad2.dpad_left) {
+        if (gamepad1.dpad_left) {
             GateOpen = false;
             GateClosed = true;
             Bot.extendServo3();
         }
 
-        if (gamepad2.dpad_right) {
+        if (gamepad1.dpad_right) {
             GateOpen = true;
             GateClosed = false;
             Bot.retractServo3();
         }
     }
 
-
-    // State Controller
     // State Controller
     public void loadStateControl() {
         switch (loadState) {

@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.Outreach.Controls;
+package org.firstinspires.ftc.teamcode.Outreach.Controls.CompetitionVets;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;

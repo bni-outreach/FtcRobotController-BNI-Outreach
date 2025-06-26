@@ -74,6 +74,7 @@ public class BigWheelTeleOp extends OpMode {
 
         BigWheel.initRobot(hardwareMap);
         BigWheel.initFlyWheels(hardwareMap);
+        BigWheel.initVoltageSensor(hardwareMap);
         BigWheel.initWormGears(hardwareMap);
         BigWheel.initServos(hardwareMap);
         BigWheel.initLimelight(hardwareMap);
@@ -118,7 +119,8 @@ public class BigWheelTeleOp extends OpMode {
             servoControlManual();
             servoControlAutomatic();
         } else if (d2Style == D2Style.Auto) {
-            autoTurret();
+            //autoTurret();
+            autoTurretWithVisionModel();
         }
 
         DiscLaunchControl();
@@ -374,82 +376,84 @@ public class BigWheelTeleOp extends OpMode {
     public void autoTurretWithVisionModel() {
         double confidenceThreshold = 0.7;
 
-        // Get latest vision result from camera
         LLResult visionResult = BigWheel.cam.getLatestResult();
 
         if (visionResult != null && visionResult.isValid() && !visionResult.getDetectorResults().isEmpty()) {
+            LLResultTypes.DetectorResult bestDetector = null;
+            double bestScore = 0.0;
+
             for (Object obj : visionResult.getDetectorResults()) {
                 LLResultTypes.DetectorResult detector = (LLResultTypes.DetectorResult) obj;
                 String detectedLabel = detector.getClassName();
                 double confidence = detector.getConfidence();
+                double area = detector.getTargetArea();
 
-                if ("person".equalsIgnoreCase(detectedLabel) && confidence >= confidenceThreshold) {
-
-                    double nominalVoltage = 12.0;
-                    double currentVoltage = BigWheel.voltageSensor.getVoltage();
-                    double compensatedPower = nominalVoltage / currentVoltage;
-                    compensatedPower = Math.min(compensatedPower, 1.0);  // Cap at 100% power
-
-                    BigWheel.unloadDisc();
-                    BigWheel.rotateFlyWheel1(compensatedPower);
-                    BigWheel.rotateFlyWheel2(-compensatedPower);
-
-                    double tx = visionResult.getTx();  // Horizontal offset from center (-27 to 27 deg)
-                    double ty = visionResult.getTy();  // Vertical offset from center
-                    double ta = visionResult.getTa();  // Target area (size) as % of image
-
-                    // Pan control with deadband around errorOffset
-                    if (tx > errorOffset + 0.01) {
-                        BigWheel.shooterPanRight(tx * tXErrorMultiplier);
-                        telemetry.addLine("Pan Right: " + tx);
-                    } else if (tx < -(errorOffset + 0.01)) {
-                        BigWheel.shooterPanLeft(tx * tXErrorMultiplier);
-                        telemetry.addLine("Pan Left: " + tx);
-                    } else {
-                        BigWheel.setShooterPanStop();
-                        telemetry.addLine("Pan Stop");
-                        try {
-                            Thread.sleep(50);  // Small delay to ensure motor stops
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
+                if ("person".equalsIgnoreCase(detectedLabel)) {
+                    double score = confidence * 0.6 + area * 0.4;
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestDetector = detector;
                     }
-
-                    // Tilt control with deadband around errorOffset
-                    if (ty > errorOffset + 0.01) {
-                        BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
-                        telemetry.addLine("Tilt Up: " + ty);
-                    } else if (ty < -(errorOffset + 0.01)) {
-                        BigWheel.shooterTiltDown(ty * tYErrorMultiplier);
-                        telemetry.addLine("Tilt Down: " + ty);
-                    } else {
-                        BigWheel.setShooterTiltStop();
-                        telemetry.addLine("Tilt Stop");
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-
-                    // If target area and offsets are within range, set load state to LOAD (use state machine)
-                    if (ta > 10 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset) {
-                        loadState = LoadStates.LOAD;
-                        telemetry.addLine("Load");
-                    }
-
-                    telemetry.addData("Vision Label", detectedLabel);
-                    telemetry.addData("Confidence", confidence);
-                    telemetry.addData("TX", tx);
-                    telemetry.addData("TY", ty);
-                    telemetry.addData("TA", ta);
-                    telemetry.addData("Pan Power", BigWheel.shooterPan.getPower());
-                    telemetry.addData("Tilt Power", BigWheel.shooterTilt.getPower());
-                    telemetry.addData("Battery Voltage", currentVoltage);
-                    telemetry.addData("Flywheel Power", compensatedPower);
-                    telemetry.update();
                 }
             }
+
+            if (bestDetector != null) {
+                double tx = bestDetector.getTargetXDegrees();
+                double ty = bestDetector.getTargetYDegrees();
+                double ta = bestDetector.getTargetArea();
+
+                double nominalVoltage = 12.0;
+                double currentVoltage = BigWheel.voltageSensor.getVoltage();
+                double compensatedPower = Math.min(nominalVoltage / currentVoltage, 1.0);
+
+                BigWheel.rotateFlyWheel1(compensatedPower);
+                BigWheel.rotateFlyWheel2(-compensatedPower);
+
+                if (tx > errorOffset + 0.01) {
+                    BigWheel.shooterPanRight(tx * tXErrorMultiplier);
+                    telemetry.addLine("Pan Right: " + tx);
+                } else if (tx < -(errorOffset + 0.01)) {
+                    BigWheel.shooterPanLeft(tx * tXErrorMultiplier);
+                    telemetry.addLine("Pan Left: " + tx);
+                } else {
+                    BigWheel.setShooterPanStop();
+                    telemetry.addLine("Pan Stop");
+                }
+
+                if (ty > errorOffset + 0.01) {
+                    BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
+                    telemetry.addLine("Tilt Up: " + ty);
+                } else if (ty < -(errorOffset + 0.01)) {
+                    BigWheel.shooterTiltDown(ty * tYErrorMultiplier);
+                    telemetry.addLine("Tilt Down: " + ty);
+                } else {
+                    BigWheel.setShooterTiltStop();
+                    telemetry.addLine("Tilt Stop");
+                }
+
+                if (ta > 10 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset) {
+                    loadState = LoadStates.LOAD;
+                    //BigWheel.unloadDisc();
+                    telemetry.addLine("Load and Fire!");
+                }
+
+                telemetry.addData("Detected", bestDetector.getClassName());
+                telemetry.addData("Confidence", bestDetector.getConfidence());
+                telemetry.addData("Score", bestScore);
+                telemetry.addData("TX", tx);
+                telemetry.addData("TY", ty);
+                telemetry.addData("TA", ta);
+                telemetry.addData("Battery Voltage", currentVoltage);
+                telemetry.addData("Flywheel Power", compensatedPower);
+            } else {
+                BigWheel.setShooterPanStop();
+                BigWheel.setShooterTiltStop();
+                BigWheel.stopFlyWheel1();
+                BigWheel.stopFlyWheel2();
+                telemetry.addLine("No confident person detected.");
+            }
+
+            telemetry.update();
         }
     }
 

@@ -77,9 +77,12 @@ public class BigWheelBot extends TankFourMotorDrive {
         flyWheel2.setDirection(DcMotorSimple.Direction.FORWARD);
         flyWheel2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        voltageSensor = hwBot.voltageSensor.iterator().next();
     }
 
+    public void initVoltageSensor(HardwareMap hwMap) {
+        hwBot = hwMap;
+        voltageSensor = hwBot.voltageSensor.iterator().next();
+    }
 
     // **** Initialize Worm Gear Mechanism ****
     public void initWormGears(HardwareMap hwMap) {
