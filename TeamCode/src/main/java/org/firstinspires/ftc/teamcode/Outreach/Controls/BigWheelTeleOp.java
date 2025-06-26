@@ -51,24 +51,26 @@ public class BigWheelTeleOp extends OpMode {
     public double rightMotorValue;
 
     //Limelight Variables
-    public double tXErrorMultiplier = .02;
+    public double tXErrorMultiplier = .018;
     public double tYErrorMultiplier = .015;
-    public double errorOffset = 8;
-    public double minimumCommand = 0.1;
-    public double maximumCommand = 0.4;
-
-    //Limelight Results
+    public double errorOffset = 6;
     private LLResult result = null;
 
     // For toggling D2Style with gamepad2.a
     private boolean prevD2A = false;
+
+    // Flywheel spin-up/spin-down timing for auto fire
+    private ElapsedTime flywheelTimeout = new ElapsedTime();
+    private boolean flywheelActive = false;
+    private final double flywheelShutdownDelay = 4.0; // seconds
+    private final double flywheelSpinUpDelay = 2.0; // seconds
+    private boolean flywheelSpinUpStarted = false;
 
 
     // Construct the Physical Bot based on the Robot Class
     public BigWheelBot BigWheel = new BigWheelBot();
 
 
-    // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 
@@ -113,13 +115,14 @@ public class BigWheelTeleOp extends OpMode {
         speedControl();
         driveControl();
 
+        // Use Gampad to switch between manual and automatic mode.
         if (d2Style == D2Style.Manual) {
             flyWheelControl();
             wormGearControl();
             servoControlManual();
             servoControlAutomatic();
         } else if (d2Style == D2Style.Auto) {
-            //autoTurret();
+
             autoTurretWithVisionModel();
         }
 
@@ -149,26 +152,19 @@ public class BigWheelTeleOp extends OpMode {
         leftStickX1 = gamepad1.left_stick_x;
         rightStickY1 = gamepad1.right_stick_y;
         rightStickX1 = gamepad1.right_stick_x;
-
-
     }
 
     public void driveControl() {
 
-        if (gamepad1.a) {
-            driverStyle = Style.ARCADE1;
-        }
-        if (gamepad1.b) {
-            driverStyle = Style.ARCADE2;
-        }
-        if (gamepad1.y) {
-            driverStyle = Style.TANK;
-        }
+        if (gamepad1.a) {driverStyle = Style.ARCADE1;}
+
+        if (gamepad1.b) {driverStyle = Style.ARCADE2;}
+
+        if (gamepad1.y) {driverStyle = Style.TANK;}
 
         switch (driverStyle) {
 
             case ARCADE1:
-
                 leftMotorValue = leftStickY1 - leftStickX1;
                 rightMotorValue = leftStickY1 + leftStickX1;
                 leftMotorValue = Range.clip(leftMotorValue, -1, 1);
@@ -191,7 +187,6 @@ public class BigWheelTeleOp extends OpMode {
                 break;
 
             case TANK:
-
                 double powerFLM = leftStickY1 * speedMultiply;
                 double powerRLM = leftStickY1 * speedMultiply;
                 double powerFRM = rightStickY1 * speedMultiply;
@@ -204,7 +199,6 @@ public class BigWheelTeleOp extends OpMode {
                 break;
         }
     }
-
 
     public void speedControl() {
         if (gamepad1.dpad_right) {
@@ -298,85 +292,7 @@ public class BigWheelTeleOp extends OpMode {
         }
     }
 
-
-    public void getCamResult() {
-        result = BigWheel.cam.getLatestResult();
-    }
-
-    public boolean lastResultValid() {
-        return result != null && result.isValid();
-    }
-
-    public void autoTurret() {
-
-        double nominalVoltage = 12.0;
-        double currentVoltage = BigWheel.voltageSensor.getVoltage();
-        double compensatedPower = nominalVoltage / currentVoltage;
-        compensatedPower = Math.min(compensatedPower, 1.0);  // Cap at 100% power
-
-        BigWheel.unloadDisc();
-        BigWheel.rotateFlyWheel1(compensatedPower);
-        BigWheel.rotateFlyWheel2(-compensatedPower);
-
-        getCamResult();
-        if (lastResultValid()) {
-            double tx = result.getTx();  // Horizontal offset from center (-27 to 27 deg)
-            double ty = result.getTy();  // Vertical offset from center
-            double ta = result.getTa();  // Target area (size) as % of image
-
-            // Add deadband around errorOffset and correct pan direction
-            if (tx > errorOffset + 0.01) {
-                BigWheel.shooterPanRight(tx * tXErrorMultiplier);
-                telemetry.addLine("Pan Right: " + tx);
-            } else if (tx < -(errorOffset + 0.01)) {
-                BigWheel.shooterPanLeft(tx * tXErrorMultiplier);
-                telemetry.addLine("Pan Left: " + tx);
-            } else {
-                BigWheel.setShooterPanStop();
-                telemetry.addLine("Pan Stop");
-                try {
-                    Thread.sleep(50);  // Small delay to ensure motor stops
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-
-            // Add deadband around errorOffset and correct tilt direction
-            if (ty > errorOffset + 0.01) {
-                BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
-                telemetry.addLine("Tilt Up: " + ty);
-            } else if (ty < -(errorOffset + 0.01)) {
-                BigWheel.shooterTiltDown(ty * tYErrorMultiplier);
-                telemetry.addLine("Tilt Down: " + ty);
-            } else {
-                BigWheel.setShooterTiltStop();
-                telemetry.addLine("Tilt Stop");
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-
-            if (ta > 10 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset) {
-                BigWheel.loadDiscFully();
-                telemetry.addLine("Load");
-                d2Style = D2Style.Manual;
-            }
-
-            // Add debug telemetry
-            telemetry.addData("TX", tx);
-            telemetry.addData("TY", ty);
-            telemetry.addData("TA", ta);
-            telemetry.addData("Pan Power", BigWheel.shooterPan.getPower());
-            telemetry.addData("Tilt Power", BigWheel.shooterTilt.getPower());
-            telemetry.addData("Battery Voltage", currentVoltage);
-            telemetry.addData("Flywheel Power", compensatedPower);
-        }
-    }
-
     public void autoTurretWithVisionModel() {
-        double confidenceThreshold = 0.7;
 
         LLResult visionResult = BigWheel.cam.getLatestResult();
 
@@ -401,14 +317,18 @@ public class BigWheelTeleOp extends OpMode {
 
             if (bestDetector != null) {
                 double tx = bestDetector.getTargetXDegrees();
-
                 double ty = bestDetector.getTargetYDegrees();
-
                 double ta = bestDetector.getTargetArea();
 
                 double nominalVoltage = 12.0;
                 double currentVoltage = BigWheel.voltageSensor.getVoltage();
                 double compensatedPower = Math.min(nominalVoltage / currentVoltage, 1.0);
+
+                if (!flywheelSpinUpStarted) {
+                    flywheelTimeout.reset();
+                    flywheelSpinUpStarted = true;
+                    flywheelActive = true;
+                }
 
                 BigWheel.rotateFlyWheel1(compensatedPower);
                 BigWheel.rotateFlyWheel2(-compensatedPower);
@@ -424,7 +344,7 @@ public class BigWheelTeleOp extends OpMode {
                     telemetry.addLine("Pan Stop");
                 }
 
-                // Updated tilt logic to prevent drift/slowly rising over time
+                // Updated tilt logic to prevent rising up over time
                 if (ty > 1.0) {
                     BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
                     telemetry.addLine("Tilt Up: " + ty);
@@ -437,7 +357,7 @@ public class BigWheelTeleOp extends OpMode {
                 }
 
                 // Updated load and fire logic (new thresholds and telemetry)
-                if (ta > 0.0 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset) {
+                if (ta > 0.0 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset && flywheelTimeout.seconds() >= flywheelSpinUpDelay) {
                     if (loadState == LoadStates.READY) {
                         // Telemetry for trigger condition
                         telemetry.addData("Trigger Condition Met", true);
@@ -462,8 +382,14 @@ public class BigWheelTeleOp extends OpMode {
             } else {
                 BigWheel.setShooterPanStop();
                 BigWheel.setShooterTiltStop();
-                BigWheel.stopFlyWheel1();
-                BigWheel.stopFlyWheel2();
+                // Timed flywheel shutdown if active and timeout exceeded
+                if (flywheelActive && flywheelTimeout.seconds() > flywheelShutdownDelay) {
+                    BigWheel.stopFlyWheel1();
+                    BigWheel.stopFlyWheel2();
+                    flywheelActive = false;
+                    flywheelSpinUpStarted = false;
+                    telemetry.addLine("Flywheels stopped after timeout.");
+                }
                 telemetry.addLine("No confident person detected.");
             }
 
@@ -481,8 +407,14 @@ public class BigWheelTeleOp extends OpMode {
         } else {
             BigWheel.setShooterPanStop();
             BigWheel.setShooterTiltStop();
-            BigWheel.stopFlyWheel1();
-            BigWheel.stopFlyWheel2();
+            // Timed flywheel shutdown if active and timeout exceeded
+            if (flywheelActive && flywheelTimeout.seconds() > flywheelShutdownDelay) {
+                BigWheel.stopFlyWheel1();
+                BigWheel.stopFlyWheel2();
+                flywheelActive = false;
+                flywheelSpinUpStarted = false;
+                telemetry.addLine("Flywheels stopped after timeout.");
+            }
             telemetry.addLine("No valid vision result.");
             telemetry.update();
         }
