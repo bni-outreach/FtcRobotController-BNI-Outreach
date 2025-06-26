@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.Outreach.Vision;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Outreach.Controls.BigWheelTeleOp;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.BigWheelBot;
 
+@Disabled
 @TeleOp(name = "Person Detector Tester")
 public class PersonDetector extends OpMode {
 

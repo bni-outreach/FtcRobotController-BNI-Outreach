@@ -53,7 +53,7 @@ public class BigWheelTeleOp extends OpMode {
     //Limelight Variables
     public double tXErrorMultiplier = .02;
     public double tYErrorMultiplier = .015;
-    public double errorOffset = 7;
+    public double errorOffset = 8;
     public double minimumCommand = 0.1;
     public double maximumCommand = 0.4;
 
@@ -130,6 +130,7 @@ public class BigWheelTeleOp extends OpMode {
 
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
+        telemetry.addData("Turret Mode", d2Style);
         telemetry.addData("Speed: ", speedMultiply);
         telemetry.addData("Front Left Motor Power: ", BigWheel.frontLeftMotor.getPower());
         telemetry.addData("Rear Left Motor Power: ", BigWheel.rearLeftMotor.getPower());
@@ -276,6 +277,7 @@ public class BigWheelTeleOp extends OpMode {
     }
 
     public void DiscLaunchControl() {
+        telemetry.addData("DiscLaunchControl State", loadState);
         switch (loadState) {
             case LOAD:
                 BigWheel.loadDiscFully();
@@ -399,7 +401,9 @@ public class BigWheelTeleOp extends OpMode {
 
             if (bestDetector != null) {
                 double tx = bestDetector.getTargetXDegrees();
+
                 double ty = bestDetector.getTargetYDegrees();
+
                 double ta = bestDetector.getTargetArea();
 
                 double nominalVoltage = 12.0;
@@ -420,10 +424,11 @@ public class BigWheelTeleOp extends OpMode {
                     telemetry.addLine("Pan Stop");
                 }
 
-                if (ty > errorOffset + 0.01) {
+                // Updated tilt logic to prevent drift/slowly rising over time
+                if (ty > 1.0) {
                     BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
                     telemetry.addLine("Tilt Up: " + ty);
-                } else if (ty < -(errorOffset + 0.01)) {
+                } else if (ty < -1.0) {
                     BigWheel.shooterTiltDown(ty * tYErrorMultiplier);
                     telemetry.addLine("Tilt Down: " + ty);
                 } else {
@@ -431,12 +436,21 @@ public class BigWheelTeleOp extends OpMode {
                     telemetry.addLine("Tilt Stop");
                 }
 
-                if (ta > 10 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset) {
-                    loadState = LoadStates.LOAD;
-                    //BigWheel.unloadDisc();
-                    telemetry.addLine("Load and Fire!");
+                // Updated load and fire logic (new thresholds and telemetry)
+                if (ta > 0.0 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset) {
+                    if (loadState == LoadStates.READY) {
+                        // Telemetry for trigger condition
+                        telemetry.addData("Trigger Condition Met", true);
+                        telemetry.addData("Load State Before", loadState);
+                        loadState = LoadStates.LOAD;
+                        telemetry.addLine("Auto Fire Triggered!");
+                    }
                 }
 
+                // Enhanced telemetry for debugging and monitoring
+                telemetry.addData("Load State", loadState);
+                telemetry.addData("Best Detector Confidence", bestDetector.getConfidence());
+                telemetry.addData("Score", bestScore);
                 telemetry.addData("Detected", bestDetector.getClassName());
                 telemetry.addData("Confidence", bestDetector.getConfidence());
                 telemetry.addData("Score", bestScore);
@@ -453,6 +467,23 @@ public class BigWheelTeleOp extends OpMode {
                 telemetry.addLine("No confident person detected.");
             }
 
+            // Add trigger condition telemetry after bestDetector block, before update
+            if (bestDetector != null) {
+                double tx = bestDetector.getTargetXDegrees();
+                double ty = bestDetector.getTargetYDegrees();
+                double ta = bestDetector.getTargetArea();
+                telemetry.addData("Trigger: TA in range", ta > 2 && ta < 70);
+                telemetry.addData("Trigger: TX in range", Math.abs(tx) < errorOffset);
+                telemetry.addData("Trigger: TY in range", Math.abs(ty) < errorOffset);
+                telemetry.addData("Current Load State", loadState);
+            }
+            telemetry.update();
+        } else {
+            BigWheel.setShooterPanStop();
+            BigWheel.setShooterTiltStop();
+            BigWheel.stopFlyWheel1();
+            BigWheel.stopFlyWheel2();
+            telemetry.addLine("No valid vision result.");
             telemetry.update();
         }
     }
