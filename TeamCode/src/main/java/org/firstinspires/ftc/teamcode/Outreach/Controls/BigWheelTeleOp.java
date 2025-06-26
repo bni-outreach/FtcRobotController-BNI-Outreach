@@ -62,7 +62,7 @@ public class BigWheelTeleOp extends OpMode {
     // Flywheel spin-up/spin-down timing for auto fire
     private ElapsedTime flywheelTimeout = new ElapsedTime();
     private boolean flywheelActive = false;
-    private final double flywheelShutdownDelay = 4.0; // seconds
+    private final double flywheelShutdownDelay = 5.0; // seconds
     private final double flywheelSpinUpDelay = 2.0; // seconds
     private boolean flywheelSpinUpStarted = false;
 
