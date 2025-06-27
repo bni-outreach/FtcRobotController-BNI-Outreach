@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Competition.Z20232024CenterStage.Blue17241.Robots.BlueBot;
 
+// Centerstage Pixie moved to BNI Outreach
 //@Disabled
 @TeleOp (name = "CenterStage Pixie")
 public class PixieTeleOp extends OpMode {

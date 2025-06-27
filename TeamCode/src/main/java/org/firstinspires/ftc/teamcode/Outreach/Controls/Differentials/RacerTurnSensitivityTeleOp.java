@@ -35,7 +35,6 @@ public class RacerTurnSensitivityTeleOp extends OpMode {
     public RacerBot Racer = new RacerBot();
 
 
-    // TeleOp Initialize Method.  This is the Init Button on the Driver Station Phone
     @Override
     public void init() {
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Outreach.Controls.CompetitionVets;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,8 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Outreach.Odometry.Pinpoint;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.ITDBot;
 
+
 //@Disabled
-@TeleOp (name = "IntoDeep Dory STATES", group = "Drive")
+@TeleOp (name = "IntoDeep Dory: STATES", group = "Drive")
 public class ITDTeleOp_States extends OpMode {
 
     double leftStickYVal;

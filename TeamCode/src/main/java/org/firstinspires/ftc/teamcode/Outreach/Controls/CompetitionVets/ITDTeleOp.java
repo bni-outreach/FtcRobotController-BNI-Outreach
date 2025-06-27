@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.ITDBot;
 import org.firstinspires.ftc.teamcode.Outreach.Sensors.ColorDistSensor;
 import org.firstinspires.ftc.teamcode.Outreach.Sensors.RGBLight;
 
+// Dory Moved to BNI Outreach Repository
 @TeleOp (name = "IntoDeep Dory")
 public class ITDTeleOp extends OpMode {
 
