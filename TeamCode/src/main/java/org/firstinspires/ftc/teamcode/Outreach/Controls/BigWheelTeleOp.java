@@ -16,6 +16,11 @@ import org.firstinspires.ftc.teamcode.Outreach.Robots.BigWheelBot;
 
 public class BigWheelTeleOp extends OpMode {
 
+    // Smoothing buffers
+    public double prevTx = 0;
+    public double prevTy = 0;
+    public double prevTa = 0;
+
     //TeleOp Driving Behavior Variables
     public double speedMultiply = 1;
 
@@ -51,7 +56,7 @@ public class BigWheelTeleOp extends OpMode {
     public double rightMotorValue;
 
     //Limelight Variables
-    public double tXErrorMultiplier = .018;
+    public double tXErrorMultiplier = .025;
     public double tYErrorMultiplier = .015;
     public double errorOffset = 6;
     private LLResult result = null;
@@ -293,7 +298,6 @@ public class BigWheelTeleOp extends OpMode {
     }
 
     public void autoTurretWithVisionModel() {
-
         LLResult visionResult = BigWheel.cam.getLatestResult();
 
         if (visionResult != null && visionResult.isValid() && !visionResult.getDetectorResults().isEmpty()) {
@@ -316,9 +320,18 @@ public class BigWheelTeleOp extends OpMode {
             }
 
             if (bestDetector != null) {
-                double tx = bestDetector.getTargetXDegrees();
-                double ty = bestDetector.getTargetYDegrees();
-                double ta = bestDetector.getTargetArea();
+                // Rolling average smoothing (basic example, could be made more robust)
+                double smoothingFactor = 0.6; // Adjust between 0 (no smoothing) to 1 (max smoothing)
+
+                // Use previous values as class variables
+                double tx = smoothingFactor * prevTx + (1 - smoothingFactor) * bestDetector.getTargetXDegrees();
+                double ty = smoothingFactor * prevTy + (1 - smoothingFactor) * bestDetector.getTargetYDegrees();
+                double ta = smoothingFactor * prevTa + (1 - smoothingFactor) * bestDetector.getTargetArea();
+
+                // Update previous values
+                prevTx = tx;
+                prevTy = ty;
+                prevTa = ta;
 
                 double nominalVoltage = 12.0;
                 double currentVoltage = BigWheel.voltageSensor.getVoltage();
@@ -345,10 +358,10 @@ public class BigWheelTeleOp extends OpMode {
                 }
 
                 // Updated tilt logic to prevent rising up over time
-                if (ty > 1.0) {
+                if (ty > 0.5) {
                     BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
                     telemetry.addLine("Tilt Up: " + ty);
-                } else if (ty < -1.0) {
+                } else if (ty < -0.5) {
                     BigWheel.shooterTiltDown(ty * tYErrorMultiplier);
                     telemetry.addLine("Tilt Down: " + ty);
                 } else {
@@ -357,7 +370,7 @@ public class BigWheelTeleOp extends OpMode {
                 }
 
                 // Updated load and fire logic (new thresholds and telemetry)
-                if (ta > 0.0 && ta < 40 && Math.abs(tx) < errorOffset && Math.abs(ty) < errorOffset && flywheelTimeout.seconds() >= flywheelSpinUpDelay) {
+                if (ta > 0.10 && ta < 0.5 && Math.abs(tx) < 10 && Math.abs(ty) < 3 && flywheelTimeout.seconds() >= flywheelSpinUpDelay) {
                     if (loadState == LoadStates.READY) {
                         // Telemetry for trigger condition
                         telemetry.addData("Trigger Condition Met", true);
@@ -369,8 +382,6 @@ public class BigWheelTeleOp extends OpMode {
 
                 // Enhanced telemetry for debugging and monitoring
                 telemetry.addData("Load State", loadState);
-                telemetry.addData("Best Detector Confidence", bestDetector.getConfidence());
-                telemetry.addData("Score", bestScore);
                 telemetry.addData("Detected", bestDetector.getClassName());
                 telemetry.addData("Confidence", bestDetector.getConfidence());
                 telemetry.addData("Score", bestScore);
@@ -395,9 +406,10 @@ public class BigWheelTeleOp extends OpMode {
 
             // Add trigger condition telemetry after bestDetector block, before update
             if (bestDetector != null) {
-                double tx = bestDetector.getTargetXDegrees();
-                double ty = bestDetector.getTargetYDegrees();
-                double ta = bestDetector.getTargetArea();
+                // Use the smoothed values for reporting
+                double tx = prevTx;
+                double ty = prevTy;
+                double ta = prevTa;
                 telemetry.addData("Trigger: TA in range", ta > 2 && ta < 70);
                 telemetry.addData("Trigger: TX in range", Math.abs(tx) < errorOffset);
                 telemetry.addData("Trigger: TY in range", Math.abs(ty) < errorOffset);
