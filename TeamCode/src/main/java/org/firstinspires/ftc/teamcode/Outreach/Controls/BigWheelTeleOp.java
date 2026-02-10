@@ -56,7 +56,7 @@ public class BigWheelTeleOp extends OpMode {
     public double rightMotorValue;
 
     //Limelight Variables
-    public double tXErrorMultiplier = .025;
+    public double tXErrorMultiplier = .03;
     public double tYErrorMultiplier = .015;
     public double errorOffset = 6;
     private LLResult result = null;
@@ -74,6 +74,12 @@ public class BigWheelTeleOp extends OpMode {
 
     // Construct the Physical Bot based on the Robot Class
     public BigWheelBot BigWheel = new BigWheelBot();
+
+    // Auto turret scan variables
+    private boolean scanningRight = true;
+    private double scanPanPower = 0.25;
+    private double scanPanLimitDegrees = 1000.0;
+    private double scanPosition = 0.0;
 
 
     @Override
@@ -132,18 +138,13 @@ public class BigWheelTeleOp extends OpMode {
         }
 
         DiscLaunchControl();
-        telemetryOutput();
+       // telemetryOutput();
 
     }
 
     public void telemetryOutput() {
         telemetry.addData("Drive Mode: ", driverStyle);
         telemetry.addData("Turret Mode", d2Style);
-        telemetry.addData("Speed: ", speedMultiply);
-        telemetry.addData("Front Left Motor Power: ", BigWheel.frontLeftMotor.getPower());
-        telemetry.addData("Rear Left Motor Power: ", BigWheel.rearLeftMotor.getPower());
-        telemetry.addData("Front Right Motor Power: ", BigWheel.frontRightMotor.getPower());
-        telemetry.addData("Rear Right Motor Power: ", BigWheel.rearRightMotor.getPower());
         telemetry.update();
 
     }
@@ -224,8 +225,8 @@ public class BigWheelTeleOp extends OpMode {
         compensatedPower = Math.min(compensatedPower, 1.0);  // Cap at 100% power
 
         if (gamepad2.left_bumper) {
-            BigWheel.rotateFlyWheel1(compensatedPower);
-            BigWheel.rotateFlyWheel2(-compensatedPower);
+            BigWheel.rotateFlyWheel1(1.0);
+            BigWheel.rotateFlyWheel2(-1.0);
         }
 
         if (gamepad2.right_bumper) {
@@ -321,7 +322,7 @@ public class BigWheelTeleOp extends OpMode {
 
             if (bestDetector != null) {
                 // Rolling average smoothing (basic example, could be made more robust)
-                double smoothingFactor = 0.6; // Adjust between 0 (no smoothing) to 1 (max smoothing)
+                double smoothingFactor = 0.2; // Adjust between 0 (no smoothing) to 1 (max smoothing)
 
                 // Use previous values as class variables
                 double tx = smoothingFactor * prevTx + (1 - smoothingFactor) * bestDetector.getTargetXDegrees();
@@ -357,20 +358,25 @@ public class BigWheelTeleOp extends OpMode {
                     telemetry.addLine("Pan Stop");
                 }
 
-                // Updated tilt logic to prevent rising up over time
-                if (ty > 0.5) {
-                    BigWheel.shooterTiltUp(ty * tYErrorMultiplier);
-                    telemetry.addLine("Tilt Up: " + ty);
-                } else if (ty < -0.5) {
-                    BigWheel.shooterTiltDown(ty * tYErrorMultiplier);
-                    telemetry.addLine("Tilt Down: " + ty);
+                // Updated tilt logic: add deadband and always stop within tolerance
+                double tiltDeadband = 1.0;
+                double tiltCommand = ty * tYErrorMultiplier;
+
+                if (Math.abs(ty) > tiltDeadband) {
+                    if (tiltCommand > 0) {
+                        BigWheel.shooterTiltUp(Math.abs(tiltCommand));
+                        telemetry.addLine("Tilt Up: " + ty);
+                    } else {
+                        BigWheel.shooterTiltDown(Math.abs(tiltCommand));
+                        telemetry.addLine("Tilt Down: " + ty);
+                    }
                 } else {
                     BigWheel.setShooterTiltStop();
-                    telemetry.addLine("Tilt Stop");
+                    telemetry.addLine("Tilt Hold (within Deadband)");
                 }
 
                 // Updated load and fire logic (new thresholds and telemetry)
-                if (ta > 0.10 && ta < 0.5 && Math.abs(tx) < 10 && Math.abs(ty) < 3 && flywheelTimeout.seconds() >= flywheelSpinUpDelay) {
+                if (ta > 0.05 && ta < 40 && Math.abs(tx) < 12 && Math.abs(ty) < 10 && flywheelTimeout.seconds() >= flywheelSpinUpDelay) {
                     if (loadState == LoadStates.READY) {
                         // Telemetry for trigger condition
                         telemetry.addData("Trigger Condition Met", true);
@@ -388,11 +394,24 @@ public class BigWheelTeleOp extends OpMode {
                 telemetry.addData("TX", tx);
                 telemetry.addData("TY", ty);
                 telemetry.addData("TA", ta);
-                telemetry.addData("Battery Voltage", currentVoltage);
-                telemetry.addData("Flywheel Power", compensatedPower);
             } else {
-                BigWheel.setShooterPanStop();
                 BigWheel.setShooterTiltStop();
+
+                // If scanning, gently pan left and right
+                if (scanningRight) {
+                    BigWheel.shooterPanRight(scanPanPower);
+                    scanPosition += 2;  // Faster scan step
+                    if (scanPosition >= scanPanLimitDegrees) {
+                        scanningRight = false;
+                    }
+                } else {
+                    BigWheel.shooterPanLeft(scanPanPower);
+                    scanPosition -= 2;  // Faster scan step
+                    if (scanPosition <= -scanPanLimitDegrees) {
+                        scanningRight = true;
+                    }
+                }
+
                 // Timed flywheel shutdown if active and timeout exceeded
                 if (flywheelActive && flywheelTimeout.seconds() > flywheelShutdownDelay) {
                     BigWheel.stopFlyWheel1();
@@ -401,7 +420,10 @@ public class BigWheelTeleOp extends OpMode {
                     flywheelSpinUpStarted = false;
                     telemetry.addLine("Flywheels stopped after timeout.");
                 }
-                telemetry.addLine("No confident person detected.");
+
+                telemetry.addData("Scan Direction", scanningRight ? "Right" : "Left");
+                telemetry.addData("Scan Position", scanPosition);
+                telemetry.addLine("No confident person detected - scanning...");
             }
 
             // Add trigger condition telemetry after bestDetector block, before update
@@ -410,15 +432,30 @@ public class BigWheelTeleOp extends OpMode {
                 double tx = prevTx;
                 double ty = prevTy;
                 double ta = prevTa;
-                telemetry.addData("Trigger: TA in range", ta > 2 && ta < 70);
+                telemetry.addData("Trigger: TA in range", ta > 0 && ta < 40);
                 telemetry.addData("Trigger: TX in range", Math.abs(tx) < errorOffset);
                 telemetry.addData("Trigger: TY in range", Math.abs(ty) < errorOffset);
                 telemetry.addData("Current Load State", loadState);
             }
             telemetry.update();
         } else {
-            BigWheel.setShooterPanStop();
             BigWheel.setShooterTiltStop();
+
+            // If scanning, gently pan left and right
+            if (scanningRight) {
+                BigWheel.shooterPanRight(scanPanPower);
+                scanPosition += 2;  // Faster scan step
+                if (scanPosition >= scanPanLimitDegrees) {
+                    scanningRight = false;
+                }
+            } else {
+                BigWheel.shooterPanLeft(scanPanPower);
+                scanPosition -= 2;  // Faster scan step
+                if (scanPosition <= -scanPanLimitDegrees) {
+                    scanningRight = true;
+                }
+            }
+
             // Timed flywheel shutdown if active and timeout exceeded
             if (flywheelActive && flywheelTimeout.seconds() > flywheelShutdownDelay) {
                 BigWheel.stopFlyWheel1();
@@ -427,7 +464,10 @@ public class BigWheelTeleOp extends OpMode {
                 flywheelSpinUpStarted = false;
                 telemetry.addLine("Flywheels stopped after timeout.");
             }
-            telemetry.addLine("No valid vision result.");
+
+            telemetry.addData("Scan Direction", scanningRight ? "Right" : "Left");
+            telemetry.addData("Scan Position", scanPosition);
+            telemetry.addLine("No valid vision result - scanning...");
             telemetry.update();
         }
     }

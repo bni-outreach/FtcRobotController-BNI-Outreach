@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Outreach.Controls;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.TankBot;
 
 
-//@Disabled
+@Disabled
 @TeleOp(name = "Tank:Standard")
 
 public class TankTeleOp extends OpMode {

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Outreach.Controls.CompetitionVets;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Competition.Z20232024CenterStage.Blue17241.Robots.BlueBot;
 
 // Centerstage Pixie moved to BNI Outreach
-//@Disabled
+@Disabled
 @TeleOp (name = "CenterStage Pixie")
 public class PixieTeleOp extends OpMode {
     double leftStickYVal;

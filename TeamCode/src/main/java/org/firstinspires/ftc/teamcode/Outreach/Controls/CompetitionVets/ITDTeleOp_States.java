@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Outreach.Odometry.Pinpoint;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.ITDBot;
 
 
-//@Disabled
+@Disabled
 @TeleOp (name = "IntoDeep Dory: STATES", group = "Drive")
 public class ITDTeleOp_States extends OpMode {
 

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.RingRangerBot;
 
-
+@Disabled
 @TeleOp(name = "Ringed Ranger")
 //@Disabled
 public class RingRangerTeleOp extends OpMode {
