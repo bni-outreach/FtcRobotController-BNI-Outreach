@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Outreach.Robots.GaryBot;
-import java.util.ArrayList;
-import java.util.List;
 
 @TeleOp(name = "Garry Teleop", group = "Drive")
 public class GaryTeleOp extends OpMode {
@@ -34,53 +32,41 @@ public class GaryTeleOp extends OpMode {
 
     public Style driverStyle = Style.ARCADE1;
 
-    protected boolean isIntaking = false;
-    protected boolean isTracking = false;
 
     //Velocity of the Launching wheels
-    protected double targetVelocity;
+    protected double targetVelocity = 2000;
     protected double tolerance = 50;
 
-    protected double min_velocity_drop = 50; // threshold for detecting ball contact
-    protected List<Double> previousShotVelocityL = new ArrayList<>();
 
-    protected boolean hasStartedAutoLaunch = false;
-    protected boolean hasStartedFeeding = false;
-    protected boolean hasReleased = true;
+    // Velocity Gates & Recovery Times for Near vs Far
+    protected enum RangeMode { NEAR, FAR }
+    protected RangeMode rangeMode = RangeMode.NEAR;
 
-    protected double transferServoSpeed = 1;
-    protected double intakeMotorSpeed = 1;
 
     // Instantiation of Robot using Robot Class Constructor
     public GaryBot bot = new GaryBot();
 
 
-    //Shooting variables
-    protected boolean isLaunching = false;
-
-
     @Override
     public void init() {
         bot.initRobot(hardwareMap);
+
     }
 
     @Override
     public void loop() {
-        driverOneInput();
-        driverTwoInput();
-        setFlywheelSpeed();
-        robotCentricDrive();
+        flyWheelControl();
+        feedWheelManualControl();
+        driveControl();
         telemetryOutput();
     }
 
 
 
     // Robot Centric Drive Method
-    public void robotCentricDrive() {
+    public void driveControl() {
         if (gamepad1.a) {driverStyle = Style.ARCADE1;}
-
         if (gamepad1.b) {driverStyle = Style.ARCADE2;}
-
         if (gamepad1.y) {driverStyle = Style.TANK;}
 
         switch (driverStyle) {
@@ -122,89 +108,53 @@ public class GaryTeleOp extends OpMode {
     }
 
 
-
-    //********* Firing Control ****************************
-    public boolean canLaunch(double selected_speed, double tolerance) {
-        double upper_tolerance = Math.max(0, selected_speed + tolerance);
-        double lower_tolerance = Math.max(0, selected_speed - tolerance);
-        double currentVelocity = getCurrentVelocity();
-
-        return currentVelocity >= lower_tolerance && currentVelocity <= upper_tolerance;
-    }
-
-    public void setFlywheelSpeed(){
-        //Launch if is allowed to
-        bot.flylaunch(isLaunching ? targetVelocity : 0);
-    }
     // ***** Manual Feeder Wheel Controller
-    public void driverOneInput() {
-
-        //Change ground move speed
-        if (gamepad1.dpad_right) {
-            speedMultiply = 0.5;
-        } else if (gamepad1.dpad_left) {
-            speedMultiply = 0.75;
-        } else if (gamepad1.dpad_up) {
-            speedMultiply = 0.25;
-        } else if (gamepad1.dpad_down) {
-            speedMultiply = 1;
+    public void feedWheelManualControl() {
+        if (gamepad1.left_trigger > 0.2) {
+            bot.feedArtifact(1.0);
+        }
+        else if (gamepad1.right_trigger > 0.2) {
+            bot.feedArtifact(-1.0);
+        }
+        else {
+            bot.feedArtifact(0);
         }
 
-        if(gamepad1.left_bumper){
-            isIntaking = true;
-        }
-        if(gamepad1.right_bumper){
-            isIntaking = false;
-        }
-
-        if(isIntaking){
-            bot.intakeControl(gamepad1.left_trigger > 0.5 ? -intakeMotorSpeed : intakeMotorSpeed);
-        }
-        else{
-            bot.intakeControl(0);
-        }
     }
 
-    public void driverTwoInput(){
+    // Fly Wheel Control
+    public void flyWheelControl() {
 
-        //Control transfer servo
-        if(gamepad1.right_bumper){
-            bot.transferSpeedCon(transferServoSpeed);
-        }
-        else if(gamepad1.left_bumper){
-            bot.transferSpeedCon(-transferServoSpeed);
-        }
-        else{
-            bot.transferSpeedCon(0);
-        }
-
-        if (gamepad1.x) { // Square
+        if (gamepad2.x) {       // Square
             targetVelocity = 1000;
         }
-        if (gamepad1.a) { // X
-            targetVelocity = 1500;
+        if (gamepad2.a) {   // X
+            // NEAR preset
+            targetVelocity = 1500;  //781
+
         }
-        if (gamepad1.b) { // Circle
+        if (gamepad2.b) { // Circle
             targetVelocity = 2000;
+
         }
-        if (gamepad1.y) { // Triangle
+        if (gamepad2.y) { // Triangle
+            // FAR preset
             targetVelocity = 2500;
-        }
-        if(gamepad1.right_stick_button)
-        {
-            targetVelocity = 3000;
+
         }
 
+        if (gamepad2.left_bumper) {
+            targetVelocity = 0;
+        }
 
-        if (gamepad1.left_trigger > 0.5){
-            isLaunching = false;
-        }
-        if (gamepad1.right_trigger > 0.5){
-            isLaunching = true;
-        }
+        bot.flylaunch(targetVelocity);
+
+
+        // Always command velocity each loop
+        bot.leftFlyWheel.setVelocity(targetVelocity);
+        bot.rightFlyWheel.setVelocity(targetVelocity);
 
     }
-
 
     // ***** Helper Method for Telemetry
     public void telemetryOutput() {
@@ -214,11 +164,7 @@ public class GaryTeleOp extends OpMode {
         telemetry.update();
     }
 
-    //******** Helper Functions **************************
-    private double getCurrentVelocity() {
-        // Averages front and back motor velocity
-        return (bot.launchFrontMotor.getVelocity() + bot.launchBackMotor.getVelocity()) / 2.0;
-    }
+
 
     public void setMotorPower(DcMotor motor, double speed, double threshold, double multiplier) {
         if (speed <= threshold && speed >= -threshold) {

@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
+
 
 public class GaryBot {
 
@@ -21,24 +20,15 @@ public class GaryBot {
     public DcMotor rearRightMotor;//2
 
     // Fly Wheels and Variable Feeder Motors
-    public DcMotorEx launchFrontMotor;
-    public DcMotorEx launchBackMotor;
-
-    public DcMotor intakeMotor;
-
-    public CRServo transferServo;
-
-    public Servo LED;
+    public DcMotorEx leftFlyWheel;
+    public DcMotorEx rightFlyWheel;
+    public DcMotor feederWheel;
 
     public LinearOpMode LinearOp = null;
 
     public static final double TICKS_PER_ROTATION = 386.3;
     public static final double ODO_TICKS_PER_ROTATION = 2000;
 
-    // Instance Variables for IMU
-    public IMU imu = null;
-    public double headingTolerance = 0.0; //0.5
-    public double currentHeading = 0;
 
     // Helper method to set the run modes for all motors at the same
     public void setMotorRunModes(DcMotor.RunMode mode) {
@@ -56,28 +46,21 @@ public class GaryBot {
         hwBot = hwMap;
 
         //Drivetrain Motors HW Mapping
-        frontLeftMotor = hwBot.dcMotor.get("front_left_motor");//Port 1 Control
-        frontRightMotor = hwBot.dcMotor.get("front_right_motor");//Port 0 Control
-        rearLeftMotor = hwBot.dcMotor.get("rear_left_motor");//Port 3 Control
-        rearRightMotor = hwBot.dcMotor.get("rear_right_motor");//Port 2 Control
+        frontLeftMotor = hwBot.dcMotor.get("front_left_motor");//Port 0 Control
+        frontRightMotor = hwBot.dcMotor.get("front_right_motor");//Port 1 Control
+        rearLeftMotor = hwBot.dcMotor.get("rear_left_motor");//Port 2 Control
+        rearRightMotor = hwBot.dcMotor.get("rear_right_motor");//Port 3 Control
 
         //Flywheels & Feed Wheel
-        launchFrontMotor = hwBot.get(DcMotorEx.class, "front_launch_wheel");;//Port ex 0
-        launchBackMotor = hwBot.get(DcMotorEx.class, "back_launch_wheel");;//Port ex 2
-
-        intakeMotor = hwBot.dcMotor.get("intake_motor");
-
-        transferServo = hwBot.crservo.get("transfer_servo");
-        LED = hwBot.servo.get("led");//Servo 1 Control
+        leftFlyWheel = hwBot.get(DcMotorEx.class, "left_fly_wheel");;//Port ex 0
+        rightFlyWheel = hwBot.get(DcMotorEx.class, "right_fly_wheel");//Port ex 1
+        feederWheel = hwBot.get(DcMotorEx.class,"feeder_wheel");//Port ex 2
 
         // Drivetrain Motor direction mapping
-        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         rearLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         rearRightMotor.setDirection(DcMotor.Direction.FORWARD);
-
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
 
         // Drivetrain Set Motor Run Modes
         setMotorRunModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -89,57 +72,36 @@ public class GaryBot {
         rearLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Flywheel & Feeder Wheel Direction Mapping
-        launchFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        launchBackMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        leftFlyWheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFlyWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        feederWheel.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Flywheel & Feed Wheel Breaking
-        launchFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        launchBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFlyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFlyWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        feederWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // Flywheel & Feed Wheel Encoding for Using Velocity
-        launchFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        launchBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //IMU for Rev Robotics Control Hub
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-        imu = hwMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        leftFlyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFlyWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        feederWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
     public void flylaunch(double velocity ){
-        launchFrontMotor.setVelocity(velocity);
-        launchBackMotor.setVelocity(velocity);
+
+        leftFlyWheel.setVelocity(velocity);
+        rightFlyWheel.setVelocity(velocity);
+
     }
 
-    public void intakeControl(double speed){
-        intakeMotor.setPower(speed);
-    }
+    public void feedArtifact(double speed){
 
-    public void beginFeed(){
-        transferServo.setPower(1);
-        //fill up with feeder logic
-    }
-    public void stopFeed(){
-        //fill up with feeder logic
-        transferServo.setPower(0);
-    }
+        feederWheel.setPower(speed);
 
-    public void LEDCon(int color)
-    {
-        float n = new float[]{0, .279f, .333f, .388f, .5f, .611f, .722f}[color];
-        LED.setPosition(n);
-    }
-    public void transferSpeedCon(double speed){
-        transferServo.setPower(speed);
+
     }
 
 
