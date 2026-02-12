@@ -76,9 +76,9 @@ public class GaryTeleOp extends OpMode {
 
     // Robot Centric Drive Method
     public void driveControl() {
-        if (gamepad1.a) {driverStyle = Style.ARCADE1;}
-        if (gamepad1.b) {driverStyle = Style.ARCADE2;}
-        if (gamepad1.y) {driverStyle = Style.TANK;}
+        //if (gamepad1.a) {driverStyle = Style.ARCADE1;}
+        //if (gamepad1.b) {driverStyle = Style.ARCADE2;}
+        //if (gamepad1.y) {driverStyle = Style.TANK;}
 
         switch (driverStyle) {
 
@@ -162,19 +162,19 @@ public class GaryTeleOp extends OpMode {
     // Fly Wheel Control
     public void flyWheelControl() {
 
-        if (gamepad2.x) {       // Square
+        if (gamepad1.x) {       // Square
             targetVelocity = 1000;
         }
-        if (gamepad2.a) {   // X
+        if (gamepad1.a) {   // X
             // NEAR preset
             targetVelocity = 1500;  //781
 
         }
-        if (gamepad2.b) { // Circle
+        if (gamepad1.b) { // Circle
             targetVelocity = 2000;
 
         }
-        if (gamepad2.y) { // Triangle
+        if (gamepad1.y) { // Triangle
             // FAR preset
             targetVelocity = 2500;
 
