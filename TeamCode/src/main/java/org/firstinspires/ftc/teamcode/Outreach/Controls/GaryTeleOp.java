@@ -163,11 +163,11 @@ public class GaryTeleOp extends OpMode {
     public void flyWheelControl() {
 
         if (gamepad1.x) {       // Square
-            targetVelocity = 1000;
+            targetVelocity = 3000;
         }
         if (gamepad1.a) {   // X
             // NEAR preset
-            targetVelocity = 1500;  //781
+            targetVelocity = 2500;  //781
 
         }
         if (gamepad1.b) { // Circle
@@ -176,16 +176,13 @@ public class GaryTeleOp extends OpMode {
         }
         if (gamepad1.y) { // Triangle
             // FAR preset
-            targetVelocity = 2500;
+            targetVelocity = 1500;
 
         }
 
-        if (gamepad2.left_bumper) {
+        if (gamepad1.right_bumper) {
             targetVelocity = 0;
         }
-
-        bot.flylaunch(targetVelocity);
-
 
         // Always command velocity each loop
         bot.leftFlyWheel.setVelocity(-targetVelocity);
@@ -197,6 +194,8 @@ public class GaryTeleOp extends OpMode {
     public void telemetryOutput() {
         telemetry.addLine("-------------------------------------");
         telemetry.addData("Target Velocity: ", targetVelocity);
+        telemetry.addData("Left Fly Wheel Velocity: ", bot.leftFlyWheel.getVelocity());
+        telemetry.addData("Right Fly Wheel Velocity: ", bot.rightFlyWheel.getVelocity());
         telemetry.addLine("-------------------------------------");
         telemetry.update();
     }

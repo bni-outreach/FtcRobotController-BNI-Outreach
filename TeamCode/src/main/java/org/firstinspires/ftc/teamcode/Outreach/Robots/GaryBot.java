@@ -90,12 +90,12 @@ public class GaryBot {
 
     }
 
-    public void flylaunch(double velocity ){
-
-        leftFlyWheel.setVelocity(velocity);
-        rightFlyWheel.setVelocity(velocity);
-
-    }
+//    public void flylaunch(double velocity ){
+//
+//        leftFlyWheel.setVelocity(velocity);
+//        rightFlyWheel.setVelocity(velocity);
+//
+//    }
 
     public void feedArtifact(double speed){
 
