@@ -75,7 +75,7 @@ public class GaryBot {
 
         // Flywheel & Feeder Wheel Direction Mapping
         leftFlyWheel.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFlyWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFlyWheel.setDirection(DcMotorSimple.Direction.FORWARD);
         feederWheel.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Flywheel & Feed Wheel Breaking

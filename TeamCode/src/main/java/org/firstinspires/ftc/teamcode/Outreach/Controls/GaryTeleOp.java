@@ -37,7 +37,7 @@ public class GaryTeleOp extends OpMode {
     public double angularIncrease = 10;
 
     //Velocity of the Launching wheels
-    protected double targetVelocity = 2000;
+    protected double targetVelocity = 0;
     protected double tolerance = 50;
 
 
@@ -188,7 +188,7 @@ public class GaryTeleOp extends OpMode {
 
 
         // Always command velocity each loop
-        bot.leftFlyWheel.setVelocity(targetVelocity);
+        bot.leftFlyWheel.setVelocity(-targetVelocity);
         bot.rightFlyWheel.setVelocity(targetVelocity);
 
     }
